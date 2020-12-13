@@ -34,7 +34,7 @@ public class TestMongoOrm {
     datastore = morphia.createDatastore(mongoClient, BD_NAME);
 
     weightless = new Weightless(datastore);
-    personDal = weightless.getDal(PersonDal.class);
+    personDal = weightless.get(PersonDal.class);
   }
 
   @After

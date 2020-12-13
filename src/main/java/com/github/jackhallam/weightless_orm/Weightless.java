@@ -24,15 +24,16 @@ import java.util.stream.Collectors;
 
 public class Weightless {
 
-  private Map<String, Object> myMap;
-  private Datastore datastore;
+  private final Datastore datastore;
+  private final Map<String, Object> interceptedClassNameToObject;
 
   public Weightless(Datastore datastore) {
     try {
       this.datastore = datastore;
-      myMap = new HashMap<>();
+      interceptedClassNameToObject = new HashMap<>();
 
-      Reflections reflections = new Reflections();
+      Reflections reflections = new Reflections("");
+
       Set<Class<?>> annotated = reflections.getTypesAnnotatedWith(Dal.class);
       for (Class<?> clazz : annotated) {
         Class<?> dynamicType = new ByteBuddy()
@@ -43,15 +44,15 @@ public class Weightless {
           .load(getClass().getClassLoader())
           .getLoaded();
         Object o = dynamicType.newInstance();
-        myMap.put(clazz.getName(), o);
+        interceptedClassNameToObject.put(clazz.getName(), o);
       }
     } catch (InstantiationException | IllegalAccessException e) {
       throw new RuntimeException();
     }
   }
 
-  public <T> T getDal(Class<T> clazz) {
-    return (T) myMap.get(clazz.getName());
+  public <T> T get(Class<T> clazz) {
+    return (T) interceptedClassNameToObject.get(clazz.getName());
   }
 
   public class GeneralInterceptor {
