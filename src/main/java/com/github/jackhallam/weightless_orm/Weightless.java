@@ -31,9 +31,34 @@ import java.util.stream.Collectors;
 
 public class Weightless implements Closeable {
 
-  private final MongoClient mongoClient;
+  private MongoClient mongoClient;
   private final Datastore datastore;
   private final Map<String, Object> interceptedClassNameToObject;
+
+  public Weightless(Datastore datastore) {
+    try {
+      this.datastore = datastore;
+
+      interceptedClassNameToObject = new HashMap<>();
+
+      Reflections reflections = new Reflections("");
+
+      Set<Class<?>> annotated = reflections.getTypesAnnotatedWith(Dal.class);
+      for (Class<?> clazz : annotated) {
+        Class<?> dynamicType = new ByteBuddy()
+          .subclass(clazz)
+          .method(ElementMatchers.any())
+          .intercept(MethodDelegation.to(new GeneralInterceptor()))
+          .make()
+          .load(getClass().getClassLoader())
+          .getLoaded();
+        Object o = dynamicType.newInstance();
+        interceptedClassNameToObject.put(clazz.getName(), o);
+      }
+    } catch (InstantiationException | IllegalAccessException e) {
+      throw new RuntimeException();
+    }
+  }
 
   public Weightless(MongoClient mongoClient, String databaseName) {
     try {
