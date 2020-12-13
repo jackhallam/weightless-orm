@@ -1,4 +1,4 @@
-package com.github.jackhallam.weightless_orm;
+package com.github.jackhallam.weightless_orm.annotations;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -6,7 +6,6 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.PARAMETER)
-public @interface PassTos {
-  PassTo[] value();
+@Target(ElementType.METHOD)
+public @interface Update {
 }

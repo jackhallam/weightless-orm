@@ -1,4 +1,4 @@
-package com.github.jackhallam.weightless_orm;
+package com.github.jackhallam.weightless_orm.annotations;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -6,8 +6,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.METHOD)
-public @interface And {
-  String fn1();
-  String fn2();
+@Target(ElementType.PARAMETER)
+public @interface Field {
+  String value();
 }

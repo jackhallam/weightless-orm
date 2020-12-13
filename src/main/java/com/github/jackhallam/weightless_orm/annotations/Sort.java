@@ -1,4 +1,4 @@
-package com.github.jackhallam.weightless_orm;
+package com.github.jackhallam.weightless_orm.annotations;
 
 import java.lang.annotation.*;
 

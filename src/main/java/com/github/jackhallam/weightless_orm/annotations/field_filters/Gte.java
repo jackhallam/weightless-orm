@@ -1,4 +1,4 @@
-package com.github.jackhallam.weightless_orm;
+package com.github.jackhallam.weightless_orm.annotations.field_filters;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -7,6 +7,5 @@ import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.PARAMETER)
-public @interface Field {
-  String value();
+public @interface Gte {
 }

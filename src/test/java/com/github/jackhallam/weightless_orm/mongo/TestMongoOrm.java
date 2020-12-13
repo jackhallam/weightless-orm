@@ -5,35 +5,29 @@ import com.mongodb.MongoClient;
 import com.mongodb.ServerAddress;
 import de.bwaldvogel.mongo.MongoServer;
 import de.bwaldvogel.mongo.backend.memory.MemoryBackend;
-import dev.morphia.Datastore;
-import dev.morphia.Morphia;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.net.InetSocketAddress;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 
 public class TestMongoOrm {
 
-  public static String BD_NAME = "FAKE_MONGO_DB";
+  public static String DB_NAME = "FAKE_MONGO_DB";
 
   public MongoClient mongoClient;
-  public Datastore datastore;
-
   public Weightless weightless;
   public PersonDal personDal;
 
   @Before
   public void before() throws Exception {
     mongoClient = getFakeMongoClient();
-    Morphia morphia = new Morphia();
-    morphia.mapPackage("com.github.jackhallam.weightless_orm.mongo");
-    datastore = morphia.createDatastore(mongoClient, BD_NAME);
-
-    weightless = new Weightless(datastore);
+    weightless = new Weightless(mongoClient, DB_NAME);
     personDal = weightless.get(PersonDal.class);
   }
 
@@ -71,6 +65,12 @@ public class TestMongoOrm {
   }
 
   @Test
+  public void testOptionalFindEmptySuccess() throws Exception {
+    Optional<Person> personOptional = personDal.getPerson(1);
+    assertFalse(personOptional.isPresent());
+  }
+
+  @Test
   public void testSingleFieldFindSuccess() throws Exception {
     Person personOne = addPerson(1, "Blue", 2);
     Person personTwo = addPerson(2, "Red", 3);
@@ -81,33 +81,23 @@ public class TestMongoOrm {
   }
 
   @Test
-  public void testMultipleFieldFindSuccess() throws Exception {
+  public void testTwoFieldFindSuccess() throws Exception {
     Person personOne = addPerson(1, "Blue", 2);
     Person personTwo = addPerson(2, "Red", 5);
     Person personThree = addPerson(3, "Green", 10);
 
-    List<Person> people = personDal.peopleWithFavoriteNumberBetween(4,6);
+    List<Person> people = personDal.peopleWithFavoriteNumberBetween(4, 6);
     assertEquals(1, people.size());
   }
 
   @Test
-  public void testAndFnFindSuccess() throws Exception {
+  public void testThreeFieldFindSuccess() throws Exception {
     Person personOne = addPerson(1, "Blue", 2);
     Person personTwo = addPerson(2, "Red", 5);
     Person personThree = addPerson(3, "Green", 10);
 
     List<Person> people = personDal.peopleWithFavoriteColorAndFavoriteNumberBetween("Red", 4, 6);
     assertEquals(1, people.size());
-  }
-
-  @Test
-  public void testOrFnFindSuccess() throws Exception {
-    Person personOne = addPerson(1, "Blue", 2);
-    Person personTwo = addPerson(2, "Red", 3);
-    Person personThree = addPerson(3, "Green", 10);
-
-    List<Person> people = personDal.peopleWithFavoriteColorOrFavoriteNumberBetween("Red", 9, 11);
-    assertEquals(2, people.size());
   }
 
   @Test
