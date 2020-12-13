@@ -110,6 +110,36 @@ public class TestMongoOrm {
     assertEquals(2, people.size());
   }
 
+  @Test
+  public void testSingleSortSuccess() throws Exception {
+    Person personOne = addPerson(1, "Blue", 100);
+    Person personTwo = addPerson(2, "Red", 1);
+    Person personThree = addPerson(3, "Green", 50);
+    Person personFour = addPerson(4, "Orange", 51);
+
+    List<Person> people = personDal.peopleByLowestFavoriteNumber();
+    assertEquals(4, people.size());
+    assertEquals(2, people.get(0).id);
+    assertEquals(3, people.get(1).id);
+    assertEquals(4, people.get(2).id);
+    assertEquals(1, people.get(3).id);
+  }
+
+  @Test
+  public void testMultipleSortSuccess() throws Exception {
+    Person personOne = addPerson(1, "Blue", 20);
+    Person personTwo = addPerson(2, "Red", 100);
+    Person personThree = addPerson(3, "Green", 20);
+    Person personFour = addPerson(4, "Orange", 100);
+
+    List<Person> people = personDal.peopleByFavoriteNumberAndHighestId();
+    assertEquals(4, people.size());
+    assertEquals(3, people.get(0).id);
+    assertEquals(1, people.get(1).id);
+    assertEquals(4, people.get(2).id);
+    assertEquals(2, people.get(3).id);
+  }
+
   private Person addPerson(int id, String color, int number) {
     Person personThree = new Person();
     personThree.id = id;

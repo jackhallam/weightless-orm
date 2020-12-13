@@ -37,6 +37,15 @@ public interface PersonDal {
     @PassTo(fn = "peopleWithFavoriteNumberBetween", paramNum = 0) int low,
     @PassTo(fn = "peopleWithFavoriteNumberBetween", paramNum = 1) int high);
 
+  @Find
+  @Sort(onField = "favoriteNumber")
+  List<Person> peopleByLowestFavoriteNumber();
+
+  @Find
+  @Sort(onField = "favoriteNumber")
+  @Sort(onField = "id", direction = Sort.Direction.DESCENDING)
+  List<Person> peopleByFavoriteNumberAndHighestId();
+
   @Add
   Person addPerson(Person person);
 

@@ -319,9 +319,20 @@ public class Weightless {
    * Looks through annotations and applies sorts in the correct order
    */
   private void addSorts(Query<?> q, Annotation[] annotations) {
-    String sortString = Arrays.stream(annotations).filter(annotation1 -> annotation1.annotationType().equals(Sort.class)).map(sortAnnotation -> {
-      String by = ((Sort) sortAnnotation).onField();
-      boolean isAscending = ((Sort) sortAnnotation).direction() == Sort.Direction.ASCENDING;
+    List<Sort> sortAnnotations = new ArrayList<>();
+    for (Annotation methodLevelAnnotation : annotations) {
+      if (methodLevelAnnotation.annotationType().equals(Sorts.class)) {
+        Sorts sortsAnnotation = (Sorts) methodLevelAnnotation;
+        sortAnnotations.addAll(Arrays.asList(sortsAnnotation.value()));
+      } else if (methodLevelAnnotation.annotationType().equals(Sort.class)) {
+        Sort sortAnnotation = (Sort) methodLevelAnnotation;
+        sortAnnotations.add(sortAnnotation);
+      }
+    }
+
+    String sortString = sortAnnotations.stream().map(sortAnnotation -> {
+      String by = sortAnnotation.onField();
+      boolean isAscending = sortAnnotation.direction() == Sort.Direction.ASCENDING;
       return (isAscending ? "" : "-") + by;
     }).collect(Collectors.joining(","));
     if (!sortString.isEmpty()) {
