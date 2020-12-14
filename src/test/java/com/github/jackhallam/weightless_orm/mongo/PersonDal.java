@@ -1,6 +1,7 @@
 package com.github.jackhallam.weightless_orm.mongo;
 
 import com.github.jackhallam.weightless_orm.annotations.*;
+import com.github.jackhallam.weightless_orm.annotations.field_filters.DoesNotExist;
 import com.github.jackhallam.weightless_orm.annotations.field_filters.Equals;
 import com.github.jackhallam.weightless_orm.annotations.field_filters.Gte;
 import com.github.jackhallam.weightless_orm.annotations.field_filters.Lte;
@@ -25,6 +26,9 @@ public interface PersonDal {
 
   @Find
   List<Person> peopleWithFavoriteColorAndFavoriteNumberBetween(@Field("favoriteColor") @Equals String color, @Field("favoriteNumber") @Gte int low, @Field("favoriteNumber") @Lte int high);
+
+  @Find
+  List<Person> peopleWhereFavoriteColorDoesNotExist(@Field("favoriteColor") @DoesNotExist String color);
 
   @Find
   @Sort(onField = "favoriteNumber")

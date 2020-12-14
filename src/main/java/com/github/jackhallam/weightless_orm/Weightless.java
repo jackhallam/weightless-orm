@@ -1,10 +1,7 @@
 package com.github.jackhallam.weightless_orm;
 
 import com.github.jackhallam.weightless_orm.annotations.*;
-import com.github.jackhallam.weightless_orm.annotations.field_filters.Equals;
-import com.github.jackhallam.weightless_orm.annotations.field_filters.Gte;
-import com.github.jackhallam.weightless_orm.annotations.field_filters.HasAnyOf;
-import com.github.jackhallam.weightless_orm.annotations.field_filters.Lte;
+import com.github.jackhallam.weightless_orm.annotations.field_filters.*;
 import com.mongodb.MongoClient;
 import dev.morphia.Datastore;
 import dev.morphia.Key;
@@ -226,6 +223,8 @@ public class Weightless implements Closeable {
       filtersMap.put(Lte.class, (fieldEnd, fieldValue) -> fieldEnd.lessThanOrEq(fieldValue));
       filtersMap.put(Gte.class, (fieldEnd, fieldValue) -> fieldEnd.greaterThanOrEq(fieldValue));
       filtersMap.put(HasAnyOf.class, (fieldEnd, fieldValue) -> fieldEnd.hasAnyOf((Iterable<?>) fieldValue));
+      filtersMap.put(Exists.class, (fieldEnd, fieldValue) -> fieldEnd.exists());
+      filtersMap.put(DoesNotExist.class, (fieldEnd, fieldValue) -> fieldEnd.doesNotExist());
       return filtersMap;
     }
   }

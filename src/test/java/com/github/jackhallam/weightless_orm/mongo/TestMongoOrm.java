@@ -71,6 +71,16 @@ public class TestMongoOrm {
   }
 
   @Test
+  public void testDoesNotExistSuccess() throws Exception {
+    addPerson(1, null, 2);
+    addPerson(2, "blue", 3);
+
+    List<Person> people = personDal.peopleWhereFavoriteColorDoesNotExist("");
+    assertEquals(1, people.size());
+    assertEquals(1, people.get(0).id);
+  }
+
+  @Test
   public void testSingleFieldFindSuccess() throws Exception {
     Person personOne = addPerson(1, "Blue", 2);
     Person personTwo = addPerson(2, "Red", 3);
