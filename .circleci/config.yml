@@ -11,3 +11,9 @@ jobs:
     steps:
       - maven/test
       - coveralls/upload
+
+workflows:
+  version: 2
+  workflow:
+    jobs:
+    - test_and_cover
