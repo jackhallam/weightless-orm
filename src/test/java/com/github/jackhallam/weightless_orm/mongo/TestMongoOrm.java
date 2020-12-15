@@ -140,6 +140,15 @@ public class TestMongoOrm {
     assertEquals(2, people.get(3).id);
   }
 
+  @Test
+  public void testFindOrCreateSuccess() throws Exception {
+    Optional<Person> personOneOptional = personDal.findOrCreatePersonWithFavoriteColor("blue");
+    Optional<Person> personTwoOptional = personDal.findOrCreatePersonWithFavoriteColor("green");
+    Optional<Person> personThreeOptional = personDal.findOrCreatePersonWithFavoriteColor("blue");
+    assertEquals("blue", personOneOptional.get().favoriteColor);
+    // TODO fix ids to naturally rise
+  }
+
   private Person addPerson(int id, String color, int number) {
     Person personThree = new Person();
     personThree.id = id;

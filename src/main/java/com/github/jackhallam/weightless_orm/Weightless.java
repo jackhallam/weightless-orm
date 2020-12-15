@@ -123,7 +123,7 @@ public class Weightless implements Closeable {
           addSorts(q, annotations);
           return returnCorrectWrapper(q, method);
         }
-        if (annotation.annotationType().equals(Add.class) || annotation.annotationType().equals(Update.class)) {
+        if (annotation.annotationType().equals(Create.class) || annotation.annotationType().equals(Update.class)) {
           Class<?> clazz = method.getParameterTypes()[0];
           Key<?> key = datastore.save(clazz.cast(allArguments[0]));
           java.lang.reflect.Field idField = null;
@@ -139,8 +139,73 @@ public class Weightless implements Closeable {
           Query<?> q = datastore.find(clazz).field(idField.getName()).equal(key.getId());
           return returnCorrectWrapper(q, method);
         }
+        if (annotation.annotationType().equals(FindOrCreate.class)) {
+          Class<?> clazz = Class.forName(getInnerTypeIfPresent(method.getGenericReturnType()).getTypeName());
+          Query<?> q = datastore.find(clazz);
+          addFilters(q, method, allArguments);
+          addSorts(q, annotations);
+          Optional<?> found = returnForceOptionalWrapper(q);
+          if (found.isPresent()) {
+            return found.get();
+          }
+
+          // not found in db, create a new object and store it
+
+          Map<String, Object> fields = new HashMap<>();
+
+          for (int i = 0; i < method.getParameterCount(); i++) {
+            Parameter parameter = method.getParameters()[i];
+            Annotation[] parameterAnnotations = parameter.getAnnotations();
+            String fieldName = null;
+            for (Annotation parameterAnnotation : parameterAnnotations) {
+              if (parameterAnnotation.annotationType().equals(Field.class)) {
+                fieldName = ((Field) parameterAnnotation).value();
+                fields.put(fieldName, null);
+              } else if (parameterAnnotation.annotationType().equals(Equals.class)) {
+                fields.put(fieldName, allArguments[i]);
+              } else {
+                fields.remove(fieldName);
+              }
+            }
+          }
+          Object objectToStore = createDBObject(clazz, fields);
+          Key<?> key = datastore.save(clazz.cast(objectToStore));
+
+          java.lang.reflect.Field idField = null;
+          for (java.lang.reflect.Field field : clazz.getDeclaredFields()) {
+            if (field.getAnnotation(dev.morphia.annotations.Id.class) != null) {
+              idField = field;
+              break;
+            }
+          }
+          if (idField == null) {
+            throw new RuntimeException("NO ID ON " + clazz.getName());
+          }
+          Query<?> keyQ = datastore.find(clazz).field(idField.getName()).equal(key.getId());
+          return returnCorrectWrapper(keyQ, method);
+        }
       }
       throw new RuntimeException("NOT INTERCEPTED " + method.getName());
+    }
+
+    private <T> T createDBObject(Class<T> clazz, Map<String, Object> fields) {
+      try {
+        T t = clazz.newInstance();
+        fields.forEach((fieldName, fieldValue) -> {
+          try {
+            java.lang.reflect.Field field = t.getClass().getDeclaredField(fieldName);
+            boolean isAccessible = field.isAccessible();
+            field.setAccessible(true);
+            field.set(t, fieldValue);
+            field.setAccessible(isAccessible);
+          } catch (NoSuchFieldException | IllegalAccessException e) {
+            throw new RuntimeException(e);
+          }
+        });
+        return t;
+      } catch (InstantiationException | IllegalAccessException e) {
+        throw new RuntimeException(e);
+      }
     }
 
     /**
@@ -179,6 +244,13 @@ public class Weightless implements Closeable {
         return Optional.ofNullable(q.iterator().tryNext());
       }
       return q.iterator().tryNext();
+    }
+
+    /**
+     * Forces a return of q conforming to an optional
+     */
+    private <T> Optional<T> returnForceOptionalWrapper(Query<T> q) {
+      return Optional.ofNullable(q.iterator().tryNext());
     }
 
     private Type getInnerTypeIfPresent(Type outerType) {
