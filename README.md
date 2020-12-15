@@ -11,3 +11,4 @@
 [![codebeat badge](https://codebeat.co/badges/81e6af5a-88e4-4d6d-8304-d3d21256b59e)](https://codebeat.co/projects/github-com-jackhallam-weightless-orm-master)
 [![BCH compliance](https://bettercodehub.com/edge/badge/jackhallam/weightless-orm?branch=master)](https://bettercodehub.com/)
 [![codeinspector](https://www.code-inspector.com/project/17060/score/svg)](https://frontend.code-inspector.com/project/17060/dashboard)
+[![codecov](https://codecov.io/gh/jackhallam/weightless-orm/branch/master/graph/badge.svg?token=LP3NP6IVS6)](https://codecov.io/gh/jackhallam/weightless-orm)
