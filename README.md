@@ -4,6 +4,7 @@
 
 <h1 align="center">Weightless ORM</h1>
 
+[![Build Status](https://travis-ci.org/jackhallam/weightless-orm.svg?branch=master)](https://travis-ci.org/jackhallam/weightless-orm)
 [![Build Status](https://semaphoreci.com/api/v1/jackhallam/weightless-orm/branches/master/shields_badge.svg)](https://semaphoreci.com/jackhallam/weightless-orm)
 [![jackhallam](https://circleci.com/gh/jackhallam/weightless-orm.svg?style=shield)](https://circleci.com/gh/jackhallam/weightless-orm)
 [![CodeFactor](https://www.codefactor.io/repository/github/jackhallam/weightless-orm/badge)](https://www.codefactor.io/repository/github/jackhallam/weightless-orm)
