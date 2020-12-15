@@ -4,13 +4,10 @@ orbs:
   maven: circleci/maven@0.0.12
   coveralls: coveralls/coveralls@1.0.6
 
-workflows:
-  maven_test:
-    jobs:
-      - maven/test # checkout, build, test, and upload test results
-
 jobs:
-  build:
+  test_and_cover:
+    docker:
+      - image: circleci/openjdk:stretch
     steps:
       - maven/test
       - coveralls/upload
