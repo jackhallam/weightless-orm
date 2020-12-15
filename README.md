@@ -3,3 +3,5 @@
 </p>
 
 <h1 align="center">Weightless ORM</h1>
+
+[![jackhallam](https://circleci.com/gh/jackhallam/weightless-orm.svg?style=shield)](https://circleci.com/gh/jackhallam/weightless-orm)
