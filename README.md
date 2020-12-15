@@ -4,6 +4,7 @@
 
 <h1 align="center">Weightless ORM</h1>
 
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/87dafa74154349a0af3878b3435b0f98)](https://app.codacy.com/gh/jackhallam/weightless-orm?utm_source=github.com&utm_medium=referral&utm_content=jackhallam/weightless-orm&utm_campaign=Badge_Grade)
 [![Build Status](https://travis-ci.org/jackhallam/weightless-orm.svg?branch=master)](https://travis-ci.org/jackhallam/weightless-orm)
 [![Build Status](https://semaphoreci.com/api/v1/jackhallam/weightless-orm/branches/master/shields_badge.svg)](https://semaphoreci.com/jackhallam/weightless-orm)
 [![jackhallam](https://circleci.com/gh/jackhallam/weightless-orm.svg?style=shield)](https://circleci.com/gh/jackhallam/weightless-orm)
