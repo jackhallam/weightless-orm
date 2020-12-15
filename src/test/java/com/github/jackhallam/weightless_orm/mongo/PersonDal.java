@@ -39,7 +39,7 @@ public interface PersonDal {
   @Sort(onField = "id", direction = Sort.Direction.DESCENDING)
   List<Person> peopleByFavoriteNumberAndHighestId();
 
-  @Add
+  @Create
   Person addPerson(Person person);
 
   @Update
