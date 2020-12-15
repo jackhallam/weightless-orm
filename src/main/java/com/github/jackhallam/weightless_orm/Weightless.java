@@ -146,7 +146,8 @@ public class Weightless implements Closeable {
           addSorts(q, annotations);
           Optional<?> found = returnForceOptionalWrapper(q);
           if (found.isPresent()) {
-            return found.get();
+            // Found what we were looking for, rerun with correct wrapper
+            return returnCorrectWrapper(q, method);
           }
 
           // not found in db, create a new object and store it
@@ -254,7 +255,13 @@ public class Weightless implements Closeable {
     }
 
     private Type getInnerTypeIfPresent(Type outerType) {
-      Type[] types = ((ParameterizedType) outerType).getActualTypeArguments();
+      Type[] types = null;
+      try {
+        types = ((ParameterizedType) outerType).getActualTypeArguments();
+      } catch (ClassCastException e) {
+        // outerType is not a ParameterizedType, it is a normal class type
+        return outerType;
+      }
       if (types.length == 0) {
         return outerType;
       }

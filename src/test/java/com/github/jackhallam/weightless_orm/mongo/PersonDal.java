@@ -30,9 +30,6 @@ public interface PersonDal {
   @Find
   List<Person> peopleWhereFavoriteColorDoesNotExist(@Field("favoriteColor") @DoesNotExist String color);
 
-  @FindOrCreate
-  Optional<Person> findOrCreatePersonWithFavoriteColor(@Field("favoriteColor") @Equals String color);
-
   @Find
   @Sort(onField = "favoriteNumber")
   List<Person> peopleByLowestFavoriteNumber();
