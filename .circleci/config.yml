@@ -1,4 +1,4 @@
-version: 2.1
+version: 2.0
 
 orbs:
   maven: circleci/maven@0.0.12
@@ -7,13 +7,13 @@ orbs:
 jobs:
   test_and_cover:
     docker:
-      - image: circleci/openjdk:8
+      - image: circleci/openjdk:stretch
     steps:
       - maven/test
       - coveralls/upload
 
 workflows:
   version: 2
-  workflow:
+  workflow_test_and_cover:
     jobs:
     - test_and_cover
