@@ -7,7 +7,7 @@ orbs:
 jobs:
   test_and_cover:
     docker:
-      - image: circleci/openjdk:stretch
+      - image: circleci/openjdk:8
     steps:
       - maven/test
       - coveralls/upload
