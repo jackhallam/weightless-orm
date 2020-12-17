@@ -1,10 +1,13 @@
 package com.github.jackhallam.weightless_orm;
 
+import com.github.jackhallam.weightless_orm.persistents.InMemoryPersistentStore;
 import com.github.jackhallam.weightless_orm.persistents.MongoPersistentStore;
 import com.github.jackhallam.weightless_orm.persistents.PersistentStore;
 import com.mongodb.MongoClient;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
@@ -13,6 +16,18 @@ public class WeightlessORMBuilder {
 
   public static MongoBuilder mongo() {
     return new MongoBuilder();
+  }
+
+  public static InMemoryStoreBuilder inMemory() {
+    return new InMemoryStoreBuilder();
+  }
+
+  public static class InMemoryStoreBuilder {
+    public Weightless build() {
+      Map<Class<?>, List<?>> mapping = new HashMap<>();
+      PersistentStore persistenceStore = new InMemoryPersistentStore(mapping);
+      return new Weightless(persistenceStore);
+    }
   }
 
   public static class MongoBuilder {

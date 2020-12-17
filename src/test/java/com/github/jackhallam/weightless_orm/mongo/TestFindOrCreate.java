@@ -1,52 +1,32 @@
 package com.github.jackhallam.weightless_orm.mongo;
 
 import com.github.jackhallam.weightless_orm.Weightless;
-import com.github.jackhallam.weightless_orm.WeightlessORMBuilder;
 import com.github.jackhallam.weightless_orm.annotations.Create;
 import com.github.jackhallam.weightless_orm.annotations.Field;
 import com.github.jackhallam.weightless_orm.annotations.FindOrCreate;
 import com.github.jackhallam.weightless_orm.annotations.Sort;
 import com.github.jackhallam.weightless_orm.annotations.field_filters.Equals;
-import com.mongodb.MongoClient;
-import com.mongodb.ServerAddress;
-import de.bwaldvogel.mongo.MongoServer;
-import de.bwaldvogel.mongo.backend.memory.MemoryBackend;
 import dev.morphia.annotations.Id;
 import org.bson.types.ObjectId;
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
 
-import java.net.InetSocketAddress;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Supplier;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-public class TestFindOrCreate {
+public class TestFindOrCreate extends TestBase {
 
-  public Weightless weightless;
-  public Dal dal;
-
-  @Before
-  public void before() throws Exception {
-    MongoClient mongoClient = getFakeMongoClient();
-    weightless = WeightlessORMBuilder.mongo().client(mongoClient).build();
-    dal = weightless.get(Dal.class);
-  }
-
-  @After
-  public void after() throws Exception {
-    if (weightless != null) {
-      weightless.close();
-    }
+  public TestFindOrCreate(Supplier<Weightless> weightlessSupplier) {
+    super(weightlessSupplier);
   }
 
   @Test
   public void testFindOrCreateCreatedSuccess() throws Exception {
-    TestObject testObject = dal.findOrCreate("the field value");
+    TestObject testObject = getDal(Dal.class).findOrCreate("the field value");
 
     assertEquals("the field value", testObject.testField);
   }
@@ -55,8 +35,8 @@ public class TestFindOrCreate {
   public void testFindOrCreateFoundSuccess() throws Exception {
     TestObject testObject = new TestObject();
     testObject.testField = "abc";
-    testObject = dal.create(testObject);
-    TestObject foundTestObject = dal.findOrCreate("abc");
+    testObject = getDal(Dal.class).create(testObject);
+    TestObject foundTestObject = getDal(Dal.class).findOrCreate("abc");
 
     assertNotNull(foundTestObject.id);
     assertEquals(testObject.id, foundTestObject.id);
@@ -64,7 +44,7 @@ public class TestFindOrCreate {
 
   @Test
   public void testFindOrCreateOptionalSuccess() throws Exception {
-    Optional<TestObject> testObjectOptional = dal.findOrCreateOptional("the field value");
+    Optional<TestObject> testObjectOptional = getDal(Dal.class).findOrCreateOptional("the field value");
 
     assertTrue(testObjectOptional.isPresent());
     assertEquals("the field value", testObjectOptional.get().testField);
@@ -74,11 +54,11 @@ public class TestFindOrCreate {
   public void testFindOrCreateReturnAllSuccess() throws Exception {
     TestObject firstTestObject = new TestObject();
     firstTestObject.testField = "abc";
-    dal.create(firstTestObject);
+    getDal(Dal.class).create(firstTestObject);
     TestObject secondTestObject = new TestObject();
     secondTestObject.testField = "def";
-    dal.create(secondTestObject);
-    List<TestObject> objects = dal.findOrCreateReturnAll("abc");
+    getDal(Dal.class).create(secondTestObject);
+    List<TestObject> objects = getDal(Dal.class).findOrCreateReturnAll("abc");
 
     assertEquals(1, objects.size());
   }
@@ -88,14 +68,14 @@ public class TestFindOrCreate {
     TestObject firstTestObject = new TestObject();
     firstTestObject.testField = "abc";
     firstTestObject.otherTestField = 2;
-    firstTestObject = dal.create(firstTestObject);
+    firstTestObject = getDal(Dal.class).create(firstTestObject);
     TestObject secondTestObject = new TestObject();
     secondTestObject.testField = "abc";
     secondTestObject.otherTestField = 1;
-    secondTestObject = dal.create(secondTestObject);
+    secondTestObject = getDal(Dal.class).create(secondTestObject);
 
     // It finds in this case
-    List<TestObject> objects = dal.findOrCreateSorted("abc");
+    List<TestObject> objects = getDal(Dal.class).findOrCreateSorted("abc");
 
     assertEquals(2, objects.size());
     assertEquals(secondTestObject.id, objects.get(0).id);
@@ -125,11 +105,5 @@ public class TestFindOrCreate {
 
     @Create
     TestObject create(TestObject testObject);
-  }
-
-  private MongoClient getFakeMongoClient() {
-    MongoServer mongoServer = new MongoServer(new MemoryBackend());
-    InetSocketAddress serverAddress = mongoServer.bind();
-    return new MongoClient(new ServerAddress(serverAddress));
   }
 }

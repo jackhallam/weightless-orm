@@ -1,43 +1,23 @@
 package com.github.jackhallam.weightless_orm.mongo;
 
 import com.github.jackhallam.weightless_orm.Weightless;
-import com.github.jackhallam.weightless_orm.WeightlessORMBuilder;
 import com.github.jackhallam.weightless_orm.annotations.Create;
 import com.github.jackhallam.weightless_orm.annotations.Field;
 import com.github.jackhallam.weightless_orm.annotations.Find;
 import com.github.jackhallam.weightless_orm.annotations.Sort;
 import com.github.jackhallam.weightless_orm.annotations.field_filters.Equals;
-import com.mongodb.MongoClient;
-import com.mongodb.ServerAddress;
-import de.bwaldvogel.mongo.MongoServer;
-import de.bwaldvogel.mongo.backend.memory.MemoryBackend;
 import dev.morphia.annotations.Id;
 import org.bson.types.ObjectId;
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
 
-import java.net.InetSocketAddress;
+import java.util.function.Supplier;
 
 import static org.junit.Assert.assertEquals;
 
-public class TestSort {
+public class TestSort extends TestBase {
 
-  public Weightless weightless;
-  public Dal dal;
-
-  @Before
-  public void before() throws Exception {
-    MongoClient mongoClient = getFakeMongoClient();
-    weightless = WeightlessORMBuilder.mongo().client(mongoClient).build();
-    dal = weightless.get(Dal.class);
-  }
-
-  @After
-  public void after() throws Exception {
-    if (weightless != null) {
-      weightless.close();
-    }
+  public TestSort(Supplier<Weightless> weightlessSupplier) {
+    super(weightlessSupplier);
   }
 
   @Test
@@ -45,12 +25,12 @@ public class TestSort {
     TestObject firstTestObject = new TestObject();
     firstTestObject.testField = "abc";
     firstTestObject.secondTestField = 3;
-    dal.create(firstTestObject);
+    getDal(Dal.class).create(firstTestObject);
     TestObject secondTestObject = new TestObject();
     secondTestObject.testField = "abc";
     secondTestObject.secondTestField = 2;
-    secondTestObject = dal.create(secondTestObject);
-    TestObject found = dal.findSortBySecondTestField("abc");
+    secondTestObject = getDal(Dal.class).create(secondTestObject);
+    TestObject found = getDal(Dal.class).findSortBySecondTestField("abc");
 
     assertEquals(secondTestObject.id, found.id);
     assertEquals(secondTestObject.testField, found.testField);
@@ -62,12 +42,12 @@ public class TestSort {
     TestObject firstTestObject = new TestObject();
     firstTestObject.testField = "abc";
     firstTestObject.secondTestField = 2;
-    dal.create(firstTestObject);
+    getDal(Dal.class).create(firstTestObject);
     TestObject secondTestObject = new TestObject();
     secondTestObject.testField = "abc";
     secondTestObject.secondTestField = 3;
-    secondTestObject = dal.create(secondTestObject);
-    TestObject found = dal.findSortBySecondTestFieldDescending("abc");
+    secondTestObject = getDal(Dal.class).create(secondTestObject);
+    TestObject found = getDal(Dal.class).findSortBySecondTestFieldDescending("abc");
 
     assertEquals(secondTestObject.id, found.id);
     assertEquals(secondTestObject.testField, found.testField);
@@ -80,7 +60,7 @@ public class TestSort {
     firstTestObject.testField = "abc";
     firstTestObject.secondTestField = 1;
     firstTestObject.thirdTestField = 100;
-    dal.create(firstTestObject);
+    getDal(Dal.class).create(firstTestObject);
     TestObject secondTestObject = new TestObject();
     secondTestObject.testField = "abc";
     secondTestObject.secondTestField = 2;
@@ -89,8 +69,8 @@ public class TestSort {
     thirdTestObject.testField = "abc";
     thirdTestObject.secondTestField = 1;
     thirdTestObject.thirdTestField = 99;
-    thirdTestObject = dal.create(thirdTestObject);
-    TestObject found = dal.findSortBySecondAndThirdTestFields("abc");
+    thirdTestObject = getDal(Dal.class).create(thirdTestObject);
+    TestObject found = getDal(Dal.class).findSortBySecondAndThirdTestFields("abc");
 
     assertEquals(thirdTestObject.id, found.id);
     assertEquals(thirdTestObject.testField, found.testField);
@@ -121,11 +101,5 @@ public class TestSort {
 
     @Create
     TestObject create(TestObject testObject);
-  }
-
-  private MongoClient getFakeMongoClient() {
-    MongoServer mongoServer = new MongoServer(new MemoryBackend());
-    InetSocketAddress serverAddress = mongoServer.bind();
-    return new MongoClient(new ServerAddress(serverAddress));
   }
 }

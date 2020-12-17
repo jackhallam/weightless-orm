@@ -11,6 +11,6 @@ import java.util.Optional;
 public interface PersistentStoreQuery<T> {
   <Outer, Inner> Outer find(ReturnType<Outer, Inner> outerReturnType);
   Optional<T> findForceOptional();
-  <S extends Annotation> PersistentStoreQuery<T> filter(String fieldName, S filterType, Object value);
-  PersistentStoreQuery<T> sort(List<String> fieldNames, Map<String, Sort.Direction> directionMap);
+  <S extends Annotation> void filter(String fieldName, S filterType, Object value);
+  void sort(List<String> fieldNames, Map<String, Sort.Direction> directionMap);
 }
