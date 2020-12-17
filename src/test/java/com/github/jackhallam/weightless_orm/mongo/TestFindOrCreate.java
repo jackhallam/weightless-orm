@@ -1,7 +1,11 @@
 package com.github.jackhallam.weightless_orm.mongo;
 
 import com.github.jackhallam.weightless_orm.Weightless;
-import com.github.jackhallam.weightless_orm.annotations.*;
+import com.github.jackhallam.weightless_orm.WeightlessORMBuilder;
+import com.github.jackhallam.weightless_orm.annotations.Create;
+import com.github.jackhallam.weightless_orm.annotations.Field;
+import com.github.jackhallam.weightless_orm.annotations.FindOrCreate;
+import com.github.jackhallam.weightless_orm.annotations.Sort;
 import com.github.jackhallam.weightless_orm.annotations.field_filters.Equals;
 import com.mongodb.MongoClient;
 import com.mongodb.ServerAddress;
@@ -18,45 +22,63 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 public class TestFindOrCreate {
 
-  public static String DB_NAME = "FAKE_MONGO_DB";
-
-  public MongoClient mongoClient;
   public Weightless weightless;
-  public TestObjectDal testObjectDal;
+  public Dal dal;
 
   @Before
   public void before() throws Exception {
-    mongoClient = getFakeMongoClient();
-    weightless = new Weightless(mongoClient, DB_NAME);
-    testObjectDal = weightless.get(TestObjectDal.class);
+    MongoClient mongoClient = getFakeMongoClient();
+    weightless = WeightlessORMBuilder.mongo().client(mongoClient).build();
+    dal = weightless.get(Dal.class);
   }
 
   @After
   public void after() throws Exception {
-    if (mongoClient != null) {
-      mongoClient.close();
+    if (weightless != null) {
+      weightless.close();
     }
   }
 
   @Test
-  public void testFindOrCreateSuccess() throws Exception {
-    TestObject testObject = testObjectDal.findOrCreatePojo("the field value");
+  public void testFindOrCreateCreatedSuccess() throws Exception {
+    TestObject testObject = dal.findOrCreate("the field value");
+
     assertEquals("the field value", testObject.testField);
+  }
+
+  @Test
+  public void testFindOrCreateFoundSuccess() throws Exception {
+    TestObject testObject = new TestObject();
+    testObject.testField = "abc";
+    testObject = dal.create(testObject);
+    TestObject foundTestObject = dal.findOrCreate("abc");
+
+    assertNotNull(foundTestObject.id);
+    assertEquals(testObject.id, foundTestObject.id);
+  }
+
+  @Test
+  public void testFindOrCreateOptionalSuccess() throws Exception {
+    Optional<TestObject> testObjectOptional = dal.findOrCreateOptional("the field value");
+
+    assertTrue(testObjectOptional.isPresent());
+    assertEquals("the field value", testObjectOptional.get().testField);
   }
 
   @Test
   public void testFindOrCreateReturnAllSuccess() throws Exception {
     TestObject firstTestObject = new TestObject();
     firstTestObject.testField = "abc";
-    firstTestObject = testObjectDal.create(firstTestObject);
+    dal.create(firstTestObject);
     TestObject secondTestObject = new TestObject();
     secondTestObject.testField = "def";
-    secondTestObject = testObjectDal.create(secondTestObject);
-    List<TestObject> objects = testObjectDal.findOrCreateReturnAll("abc");
+    dal.create(secondTestObject);
+    List<TestObject> objects = dal.findOrCreateReturnAll("abc");
 
     assertEquals(1, objects.size());
   }
@@ -66,14 +88,14 @@ public class TestFindOrCreate {
     TestObject firstTestObject = new TestObject();
     firstTestObject.testField = "abc";
     firstTestObject.otherTestField = 2;
-    firstTestObject = testObjectDal.create(firstTestObject);
+    firstTestObject = dal.create(firstTestObject);
     TestObject secondTestObject = new TestObject();
     secondTestObject.testField = "abc";
     secondTestObject.otherTestField = 1;
-    secondTestObject = testObjectDal.create(secondTestObject);
+    secondTestObject = dal.create(secondTestObject);
 
     // It finds in this case
-    List<TestObject> objects = testObjectDal.findOrCreateSorted("abc");
+    List<TestObject> objects = dal.findOrCreateSorted("abc");
 
     assertEquals(2, objects.size());
     assertEquals(secondTestObject.id, objects.get(0).id);
@@ -82,15 +104,14 @@ public class TestFindOrCreate {
 
   public static class TestObject {
     @Id
-    ObjectId id;
-    String testField;
-    int otherTestField;
+    public ObjectId id;
+    public String testField;
+    public int otherTestField;
   }
 
-  @Dal
-  public interface TestObjectDal {
+  public interface Dal {
     @FindOrCreate
-    TestObject findOrCreatePojo(@Field("testField") @Equals String testField);
+    TestObject findOrCreate(@Field("testField") @Equals String testField);
 
     @FindOrCreate
     Optional<TestObject> findOrCreateOptional(@Field("testField") @Equals String testField);
@@ -101,9 +122,6 @@ public class TestFindOrCreate {
     @FindOrCreate
     @Sort(onField = "otherTestField")
     List<TestObject> findOrCreateSorted(@Field("testField") @Equals String testField);
-
-    @Find
-    List<TestObject> findAll();
 
     @Create
     TestObject create(TestObject testObject);
