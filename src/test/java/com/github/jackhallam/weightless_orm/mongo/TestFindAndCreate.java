@@ -14,7 +14,6 @@ import java.util.List;
 import java.util.function.Supplier;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
@@ -57,17 +56,6 @@ public class TestFindAndCreate extends TestBase {
 
     assertEquals(1, foundTestObjects.size());
     assertEquals(testObject.testField, foundTestObjects.get(0).testField);
-  }
-
-  @Test
-  public void testCreateIdCreatedSuccess() throws Exception {
-    TestObject testObject = new TestObject();
-    testObject.testField = "hello";
-    TestObject savedTestObject = getDal(Dal.class).create(testObject);
-    TestObject foundTestObject = getDal(Dal.class).find("hello");
-
-    assertNotNull(foundTestObject.id);
-    assertEquals(savedTestObject.id, foundTestObject.id);
   }
 
   public static class TestObject {

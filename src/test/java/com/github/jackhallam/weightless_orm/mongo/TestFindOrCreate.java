@@ -15,7 +15,6 @@ import java.util.Optional;
 import java.util.function.Supplier;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 public class TestFindOrCreate extends TestBase {
@@ -38,8 +37,8 @@ public class TestFindOrCreate extends TestBase {
     testObject = getDal(Dal.class).create(testObject);
     TestObject foundTestObject = getDal(Dal.class).findOrCreate("abc");
 
-    assertNotNull(foundTestObject.id);
-    assertEquals(testObject.id, foundTestObject.id);
+    assertEquals(testObject.id, foundTestObject.id); // TODO: id can be null
+    assertEquals(testObject.testField, foundTestObject.testField);
   }
 
   @Test

@@ -23,6 +23,11 @@ public class TestExistence extends TestBase {
   }
 
   @Test
+  public void test() {
+    assertTrue(false);
+  }
+
+  @Test
   public void testExistsSuccess() throws Exception {
     TestObject testObject = new TestObject();
     testObject.testField = "abc";

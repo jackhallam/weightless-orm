@@ -8,6 +8,7 @@ import de.bwaldvogel.mongo.MongoServer;
 import de.bwaldvogel.mongo.backend.memory.MemoryBackend;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 
@@ -17,6 +18,7 @@ import java.util.Collection;
 import java.util.function.Supplier;
 
 @RunWith(Parameterized.class)
+@Ignore
 public class TestBase {
 
   public Supplier<Weightless> weightlessSupplier;
