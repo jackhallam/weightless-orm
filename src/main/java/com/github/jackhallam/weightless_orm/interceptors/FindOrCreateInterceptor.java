@@ -1,6 +1,14 @@
 package com.github.jackhallam.weightless_orm.interceptors;
 
-import com.github.jackhallam.weightless_orm.*;
+import com.github.jackhallam.weightless_orm.Filterer;
+import com.github.jackhallam.weightless_orm.FiltererBuilder;
+import com.github.jackhallam.weightless_orm.Parameter;
+import com.github.jackhallam.weightless_orm.ParametersBuilder;
+import com.github.jackhallam.weightless_orm.ReturnType;
+import com.github.jackhallam.weightless_orm.ReturnTypeBuilder;
+import com.github.jackhallam.weightless_orm.Sorter;
+import com.github.jackhallam.weightless_orm.SorterBuilder;
+import com.github.jackhallam.weightless_orm.WeightlessORMException;
 import com.github.jackhallam.weightless_orm.annotations.Field;
 import com.github.jackhallam.weightless_orm.annotations.field_filters.Equals;
 import com.github.jackhallam.weightless_orm.persistents.PersistentStore;
@@ -77,12 +85,12 @@ public class FindOrCreateInterceptor {
           field.set(t, fieldValue);
           field.setAccessible(isAccessible);
         } catch (NoSuchFieldException | IllegalAccessException e) {
-          throw new RuntimeException(e);
+          throw new WeightlessORMException(e);
         }
       });
       return t;
     } catch (InstantiationException | IllegalAccessException e) {
-      throw new RuntimeException(e);
+      throw new WeightlessORMException(e);
     }
   }
 }

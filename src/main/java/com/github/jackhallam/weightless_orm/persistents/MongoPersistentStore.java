@@ -1,6 +1,7 @@
 package com.github.jackhallam.weightless_orm.persistents;
 
 import com.github.jackhallam.weightless_orm.ReturnType;
+import com.github.jackhallam.weightless_orm.WeightlessORMException;
 import com.mongodb.MongoClient;
 import dev.morphia.Datastore;
 import dev.morphia.Key;
@@ -36,7 +37,7 @@ public class MongoPersistentStore implements PersistentStore {
       }
     }
     if (idField == null) {
-      throw new RuntimeException("NO ID ON " + t.getClass().getName());
+      throw new WeightlessORMException("NO ID ON " + t.getClass().getName());
     }
     return new MongoQuery<>(datastore.find(clazz).field(idField.getName()).equal(key.getId()));
   }

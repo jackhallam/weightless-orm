@@ -49,7 +49,7 @@ public class WeightlessORMBuilder {
         } else if (databaseNames.size() == 1) {
           this.databaseName = databaseNames.get(0);
         } else {
-          throw new RuntimeException("No database name passed and found more than one to connect to: " + databaseNames);
+          throw new WeightlessORMException("No database name passed and found more than one to connect to: " + databaseNames);
         }
       }
       PersistentStore persistenceStore = new MongoPersistentStore(mongoClient, databaseName);

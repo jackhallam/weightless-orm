@@ -4,7 +4,11 @@ import com.github.jackhallam.weightless_orm.annotations.Sort;
 import com.github.jackhallam.weightless_orm.annotations.Sorts;
 
 import java.lang.annotation.Annotation;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class SorterBuilder {
 

@@ -99,10 +99,10 @@ public class TestSort {
 
   public static class TestObject {
     @Id
-    ObjectId id;
-    String testField;
-    int secondTestField;
-    int thirdTestField;
+    public ObjectId id;
+    public String testField;
+    public int secondTestField;
+    public int thirdTestField;
   }
 
   public interface Dal {

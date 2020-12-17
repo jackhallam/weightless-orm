@@ -1,6 +1,5 @@
 package com.github.jackhallam.weightless_orm;
 
-import com.github.jackhallam.weightless_orm.persistents.MongoQuery;
 import com.github.jackhallam.weightless_orm.persistents.PersistentStoreQuery;
 
 import java.lang.annotation.Annotation;

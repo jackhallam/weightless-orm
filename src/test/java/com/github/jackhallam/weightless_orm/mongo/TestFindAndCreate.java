@@ -20,7 +20,10 @@ import org.junit.Test;
 import java.net.InetSocketAddress;
 import java.util.List;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 public class TestFindAndCreate {
 
@@ -89,8 +92,8 @@ public class TestFindAndCreate {
 
   public static class TestObject {
     @Id
-    ObjectId id;
-    String testField;
+    public ObjectId id;
+    public String testField;
   }
 
   public interface Dal {

@@ -15,10 +15,10 @@ public class FiltererBuilder {
     for (Parameter<?> parameter : parameters) {
       List<? extends Annotation> annotations = parameter.getAnnotations();
       if (annotations.size() != 2) {
-        throw new RuntimeException("Expected 2 annotations on the parameter but found " + annotations.size());
+        throw new WeightlessORMException("Expected 2 annotations on the parameter but found " + annotations.size());
       }
       if (!annotations.get(0).annotationType().equals(Field.class)) {
-        throw new RuntimeException("Expected " + Field.class + " as the first annotation on the parameter but found " + annotations.get(0).annotationType());
+        throw new WeightlessORMException("Expected " + Field.class + " as the first annotation on the parameter but found " + annotations.get(0).annotationType());
       }
 
       String fieldName = ((Field) annotations.get(0)).value();

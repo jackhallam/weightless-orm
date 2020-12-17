@@ -2,13 +2,22 @@ package com.github.jackhallam.weightless_orm.persistents;
 
 
 import com.github.jackhallam.weightless_orm.ReturnType;
+import com.github.jackhallam.weightless_orm.WeightlessORMException;
 import com.github.jackhallam.weightless_orm.annotations.Sort;
-import com.github.jackhallam.weightless_orm.annotations.field_filters.*;
+import com.github.jackhallam.weightless_orm.annotations.field_filters.DoesNotExist;
+import com.github.jackhallam.weightless_orm.annotations.field_filters.Equals;
+import com.github.jackhallam.weightless_orm.annotations.field_filters.Exists;
+import com.github.jackhallam.weightless_orm.annotations.field_filters.Gte;
+import com.github.jackhallam.weightless_orm.annotations.field_filters.HasAnyOf;
+import com.github.jackhallam.weightless_orm.annotations.field_filters.Lte;
 import dev.morphia.query.FieldEnd;
 import dev.morphia.query.Query;
 
 import java.lang.annotation.Annotation;
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
 
@@ -37,7 +46,7 @@ public class MongoQuery<T> implements PersistentStoreQuery<T> {
 
   public <S extends Annotation> MongoQuery<T> filter(String fieldName, S filterType, Object value) {
     if (!getFiltersMap().containsKey(filterType.annotationType())) {
-      throw new RuntimeException("Cannot find filter " + filterType);
+      throw new WeightlessORMException("Cannot find filter " + filterType);
     }
 
     getFiltersMap().get(filterType.annotationType()).accept(query.field(fieldName), value);

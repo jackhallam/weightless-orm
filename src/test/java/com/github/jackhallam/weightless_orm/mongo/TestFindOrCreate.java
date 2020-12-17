@@ -2,7 +2,10 @@ package com.github.jackhallam.weightless_orm.mongo;
 
 import com.github.jackhallam.weightless_orm.Weightless;
 import com.github.jackhallam.weightless_orm.WeightlessORMBuilder;
-import com.github.jackhallam.weightless_orm.annotations.*;
+import com.github.jackhallam.weightless_orm.annotations.Create;
+import com.github.jackhallam.weightless_orm.annotations.Field;
+import com.github.jackhallam.weightless_orm.annotations.FindOrCreate;
+import com.github.jackhallam.weightless_orm.annotations.Sort;
 import com.github.jackhallam.weightless_orm.annotations.field_filters.Equals;
 import com.mongodb.MongoClient;
 import com.mongodb.ServerAddress;
@@ -18,7 +21,9 @@ import java.net.InetSocketAddress;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 public class TestFindOrCreate {
 
@@ -99,9 +104,9 @@ public class TestFindOrCreate {
 
   public static class TestObject {
     @Id
-    ObjectId id;
-    String testField;
-    int otherTestField;
+    public ObjectId id;
+    public String testField;
+    public int otherTestField;
   }
 
   public interface Dal {

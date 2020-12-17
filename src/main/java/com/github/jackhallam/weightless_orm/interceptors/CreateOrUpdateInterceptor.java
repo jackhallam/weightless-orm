@@ -4,6 +4,7 @@ import com.github.jackhallam.weightless_orm.Parameter;
 import com.github.jackhallam.weightless_orm.ParametersBuilder;
 import com.github.jackhallam.weightless_orm.ReturnType;
 import com.github.jackhallam.weightless_orm.ReturnTypeBuilder;
+import com.github.jackhallam.weightless_orm.WeightlessORMException;
 import com.github.jackhallam.weightless_orm.persistents.PersistentStore;
 import net.bytebuddy.implementation.bind.annotation.AllArguments;
 import net.bytebuddy.implementation.bind.annotation.Origin;
@@ -27,7 +28,7 @@ public class CreateOrUpdateInterceptor {
     ReturnType<T, S> returnType = new ReturnTypeBuilder<T, S>().method(method).build();
     List<Parameter<?>> parameters = new ParametersBuilder().method(method).args(allArguments).build();
     if (parameters.size() != 1) {
-      throw new RuntimeException("Method " + method.toGenericString() + " Expected 1 Parameter, but found " + parameters.size());
+      throw new WeightlessORMException("Method " + method.toGenericString() + " Expected 1 Parameter, but found " + parameters.size());
     }
     return persistentStore.save(parameters.get(0).getValue()).find(returnType);
   }

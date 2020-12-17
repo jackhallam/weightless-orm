@@ -19,7 +19,7 @@ public class ReturnTypeBuilder<T, S> {
     try {
       inner = (Class<S>) Class.forName(getInnerTypeIfPresent(method.getGenericReturnType()).getTypeName());
     } catch (ClassNotFoundException e) {
-      throw new RuntimeException(e);
+      throw new WeightlessORMException(e);
     }
     return new ReturnType<>(outer, inner);
   }

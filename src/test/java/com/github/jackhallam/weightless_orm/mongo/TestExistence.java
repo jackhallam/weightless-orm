@@ -2,7 +2,9 @@ package com.github.jackhallam.weightless_orm.mongo;
 
 import com.github.jackhallam.weightless_orm.Weightless;
 import com.github.jackhallam.weightless_orm.WeightlessORMBuilder;
-import com.github.jackhallam.weightless_orm.annotations.*;
+import com.github.jackhallam.weightless_orm.annotations.Create;
+import com.github.jackhallam.weightless_orm.annotations.Field;
+import com.github.jackhallam.weightless_orm.annotations.Find;
 import com.github.jackhallam.weightless_orm.annotations.field_filters.Exists;
 import com.mongodb.MongoClient;
 import com.mongodb.ServerAddress;
@@ -17,7 +19,9 @@ import org.junit.Test;
 import java.net.InetSocketAddress;
 import java.util.Optional;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 public class TestExistence {
 
@@ -60,9 +64,9 @@ public class TestExistence {
 
   public static class TestObject {
     @Id
-    ObjectId id;
-    String testField;
-    int otherTestField;
+    public ObjectId id;
+    public String testField;
+    public int otherTestField;
   }
 
   public interface Dal {

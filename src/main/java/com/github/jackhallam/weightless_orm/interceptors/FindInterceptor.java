@@ -1,6 +1,13 @@
 package com.github.jackhallam.weightless_orm.interceptors;
 
-import com.github.jackhallam.weightless_orm.*;
+import com.github.jackhallam.weightless_orm.Filterer;
+import com.github.jackhallam.weightless_orm.FiltererBuilder;
+import com.github.jackhallam.weightless_orm.Parameter;
+import com.github.jackhallam.weightless_orm.ParametersBuilder;
+import com.github.jackhallam.weightless_orm.ReturnType;
+import com.github.jackhallam.weightless_orm.ReturnTypeBuilder;
+import com.github.jackhallam.weightless_orm.Sorter;
+import com.github.jackhallam.weightless_orm.SorterBuilder;
 import com.github.jackhallam.weightless_orm.persistents.PersistentStore;
 import com.github.jackhallam.weightless_orm.persistents.PersistentStoreQuery;
 import net.bytebuddy.implementation.bind.annotation.AllArguments;

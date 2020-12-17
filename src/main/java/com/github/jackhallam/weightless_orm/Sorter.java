@@ -1,7 +1,6 @@
 package com.github.jackhallam.weightless_orm;
 
 import com.github.jackhallam.weightless_orm.annotations.Sort;
-import com.github.jackhallam.weightless_orm.persistents.MongoQuery;
 import com.github.jackhallam.weightless_orm.persistents.PersistentStoreQuery;
 
 import java.util.List;

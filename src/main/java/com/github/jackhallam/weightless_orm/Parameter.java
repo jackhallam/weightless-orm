@@ -1,7 +1,6 @@
 package com.github.jackhallam.weightless_orm;
 
 import java.lang.annotation.Annotation;
-import java.lang.reflect.Type;
 import java.util.Arrays;
 import java.util.List;
 
@@ -12,12 +11,10 @@ import java.util.List;
  */
 public class Parameter<T> {
 
-  private final Type parameterType;
   private final T t;
   private final List<? extends Annotation> annotations;
 
   public Parameter(java.lang.reflect.Parameter langParameter, T arg) {
-    parameterType = langParameter.getParameterizedType();
     t = arg;
     annotations = Arrays.asList(langParameter.getDeclaredAnnotations().clone());
   }

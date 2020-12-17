@@ -14,7 +14,8 @@ import net.bytebuddy.matcher.ElementMatchers;
 
 import java.io.Closeable;
 import java.io.IOException;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
 
 public class Weightless implements Closeable {
 
@@ -42,7 +43,7 @@ public class Weightless implements Closeable {
         .getLoaded();
       return dynamicType.newInstance();
     } catch (InstantiationException | IllegalAccessException e) {
-      throw new RuntimeException();
+      throw new WeightlessORMException(e);
     }
   }
 
