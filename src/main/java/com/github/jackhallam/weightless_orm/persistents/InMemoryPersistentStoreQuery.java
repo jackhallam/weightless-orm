@@ -79,10 +79,9 @@ public class InMemoryPersistentStoreQuery<T> implements PersistentStoreQuery<T> 
           if (directionMap.get(fieldName) == Sort.Direction.DESCENDING) {
             comparison = -comparison;
           }
-          if (comparison == 0) {
-            continue;
+          if (comparison != 0) {
+            return comparison;
           }
-          return comparison;
         }
         return 0;
       } catch (NoSuchFieldException | IllegalAccessException e) {

@@ -54,5 +54,6 @@ public class InMemoryPersistentStore implements PersistentStore {
    */
   @Override
   public void close() throws IOException {
+    // No resources to close
   }
 }
