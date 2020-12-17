@@ -59,6 +59,16 @@
             <version>1.10.18</version>
         </dependency>
         <dependency>
+            <groupId>net.sf.supercsv</groupId>
+            <artifactId>super-csv</artifactId>
+            <version>2.4.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.j256.simplecsv</groupId>
+            <artifactId>simplecsv</artifactId>
+            <version>2.6</version>
+        </dependency>
+        <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <version>4.13.1</version>

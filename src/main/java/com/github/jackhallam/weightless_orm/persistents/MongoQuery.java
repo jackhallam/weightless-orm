@@ -44,16 +44,15 @@ public class MongoQuery<T> implements PersistentStoreQuery<T> {
     return Optional.ofNullable(query.iterator().tryNext());
   }
 
-  public <S extends Annotation> MongoQuery<T> filter(String fieldName, S filterType, Object value) {
+  public <S extends Annotation> void filter(String fieldName, S filterType, Object value) {
     if (!getFiltersMap().containsKey(filterType.annotationType())) {
       throw new WeightlessORMException("Cannot find filter " + filterType);
     }
 
     getFiltersMap().get(filterType.annotationType()).accept(query.field(fieldName), value);
-    return this;
   }
 
-  public MongoQuery<T> sort(List<String> fieldNames, Map<String, Sort.Direction> directionMap) {
+  public void sort(List<String> fieldNames, Map<String, Sort.Direction> directionMap) {
     String sortString = fieldNames.stream().map(fieldName -> {
       boolean isAscending = directionMap.get(fieldName) == Sort.Direction.ASCENDING;
       return (isAscending ? "" : "-") + fieldName;
@@ -61,7 +60,6 @@ public class MongoQuery<T> implements PersistentStoreQuery<T> {
     if (!sortString.isEmpty()) {
       query.order(sortString);
     }
-    return this;
   }
 
   private Map<Class<? extends Annotation>, BiConsumer<FieldEnd<?>, Object>> getFiltersMap() {
