@@ -6,8 +6,6 @@ import com.github.jackhallam.weightless_orm.annotations.Create;
 import com.github.jackhallam.weightless_orm.annotations.Field;
 import com.github.jackhallam.weightless_orm.annotations.Find;
 import com.github.jackhallam.weightless_orm.annotations.field_filters.Equals;
-import dev.morphia.annotations.Id;
-import org.bson.types.ObjectId;
 import org.junit.Test;
 
 import java.util.List;
@@ -59,8 +57,6 @@ public class TestFindAndCreate extends TestBase {
   }
 
   public static class TestObject {
-    @Id
-    public ObjectId id;
     public String testField;
   }
 

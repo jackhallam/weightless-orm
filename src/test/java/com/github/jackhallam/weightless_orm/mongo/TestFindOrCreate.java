@@ -6,8 +6,6 @@ import com.github.jackhallam.weightless_orm.annotations.Field;
 import com.github.jackhallam.weightless_orm.annotations.FindOrCreate;
 import com.github.jackhallam.weightless_orm.annotations.Sort;
 import com.github.jackhallam.weightless_orm.annotations.field_filters.Equals;
-import dev.morphia.annotations.Id;
-import org.bson.types.ObjectId;
 import org.junit.Test;
 
 import java.util.List;
@@ -37,7 +35,6 @@ public class TestFindOrCreate extends TestBase {
     testObject = getDal(Dal.class).create(testObject);
     TestObject foundTestObject = getDal(Dal.class).findOrCreate("abc");
 
-    assertEquals(testObject.id, foundTestObject.id); // TODO: id can be null
     assertEquals(testObject.testField, foundTestObject.testField);
   }
 
@@ -77,13 +74,11 @@ public class TestFindOrCreate extends TestBase {
     List<TestObject> objects = getDal(Dal.class).findOrCreateSorted("abc");
 
     assertEquals(2, objects.size());
-    assertEquals(secondTestObject.id, objects.get(0).id);
-    assertEquals(firstTestObject.id, objects.get(1).id);
+    assertEquals(secondTestObject.otherTestField, objects.get(0).otherTestField);
+    assertEquals(firstTestObject.otherTestField, objects.get(1).otherTestField);
   }
 
   public static class TestObject {
-    @Id
-    public ObjectId id;
     public String testField;
     public int otherTestField;
   }

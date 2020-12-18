@@ -6,8 +6,6 @@ import com.github.jackhallam.weightless_orm.annotations.Field;
 import com.github.jackhallam.weightless_orm.annotations.Find;
 import com.github.jackhallam.weightless_orm.annotations.Sort;
 import com.github.jackhallam.weightless_orm.annotations.field_filters.Equals;
-import dev.morphia.annotations.Id;
-import org.bson.types.ObjectId;
 import org.junit.Test;
 
 import java.util.function.Supplier;
@@ -32,7 +30,6 @@ public class TestSort extends TestBase {
     secondTestObject = getDal(Dal.class).create(secondTestObject);
     TestObject found = getDal(Dal.class).findSortBySecondTestField("abc");
 
-    assertEquals(secondTestObject.id, found.id);
     assertEquals(secondTestObject.testField, found.testField);
     assertEquals(secondTestObject.secondTestField, found.secondTestField);
   }
@@ -49,7 +46,6 @@ public class TestSort extends TestBase {
     secondTestObject = getDal(Dal.class).create(secondTestObject);
     TestObject found = getDal(Dal.class).findSortBySecondTestFieldDescending("abc");
 
-    assertEquals(secondTestObject.id, found.id);
     assertEquals(secondTestObject.testField, found.testField);
     assertEquals(secondTestObject.secondTestField, found.secondTestField);
   }
@@ -72,14 +68,11 @@ public class TestSort extends TestBase {
     thirdTestObject = getDal(Dal.class).create(thirdTestObject);
     TestObject found = getDal(Dal.class).findSortBySecondAndThirdTestFields("abc");
 
-    assertEquals(thirdTestObject.id, found.id);
     assertEquals(thirdTestObject.testField, found.testField);
     assertEquals(thirdTestObject.secondTestField, found.secondTestField);
   }
 
   public static class TestObject {
-    @Id
-    public ObjectId id;
     public String testField;
     public int secondTestField;
     public int thirdTestField;

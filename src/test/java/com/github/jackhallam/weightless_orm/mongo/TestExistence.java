@@ -6,8 +6,6 @@ import com.github.jackhallam.weightless_orm.annotations.Field;
 import com.github.jackhallam.weightless_orm.annotations.Find;
 import com.github.jackhallam.weightless_orm.annotations.field_filters.DoesNotExist;
 import com.github.jackhallam.weightless_orm.annotations.field_filters.Exists;
-import dev.morphia.annotations.Id;
-import org.bson.types.ObjectId;
 import org.junit.Test;
 
 import java.util.Optional;
@@ -44,8 +42,6 @@ public class TestExistence extends TestBase {
   }
 
   public static class TestObject {
-    @Id
-    public ObjectId id;
     public String testField;
     public int otherTestField;
   }

@@ -2,9 +2,9 @@ package com.github.jackhallam.weightless_orm.persistents;
 
 import com.github.jackhallam.weightless_orm.ReturnType;
 import com.github.jackhallam.weightless_orm.WeightlessORMException;
+import com.github.jackhallam.weightless_orm.annotations.field_filters.Equals;
 import com.mongodb.MongoClient;
 import dev.morphia.Datastore;
-import dev.morphia.Key;
 import dev.morphia.Morphia;
 
 import java.io.IOException;
@@ -27,19 +27,19 @@ public class MongoPersistentStore implements PersistentStore {
 
   public <T> MongoQuery<T> save(T t) {
     Class<T> clazz = (Class<T>) t.getClass();
-    Key<T> key = datastore.save(t);
-    java.lang.reflect.Field idField = null;
-
+    datastore.save(t);
+    MongoQuery<T> mongoQuery = new MongoQuery<>(datastore.find(clazz));
     for (java.lang.reflect.Field field : clazz.getDeclaredFields()) {
-      if (field.getAnnotation(dev.morphia.annotations.Id.class) != null) {
-        idField = field;
-        break;
+      try {
+        boolean isAccessible = field.isAccessible();
+        field.setAccessible(true);
+        mongoQuery.filter(field.getName(), () -> Equals.class, field.get(t));
+        field.setAccessible(isAccessible);
+      } catch (IllegalAccessException e) {
+        throw new WeightlessORMException(e);
       }
     }
-    if (idField == null) {
-      throw new WeightlessORMException("NO ID ON " + t.getClass().getName());
-    }
-    return new MongoQuery<>(datastore.find(clazz).field(idField.getName()).equal(key.getId()));
+    return mongoQuery;
   }
 
   public <T, S> MongoQuery<S> find(ReturnType<T, S> returnType) {
