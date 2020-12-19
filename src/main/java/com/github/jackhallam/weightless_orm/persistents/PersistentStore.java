@@ -6,5 +6,6 @@ import java.io.Closeable;
 
 public interface PersistentStore extends Closeable {
   <T> PersistentStoreQuery<T> save(T t);
+  <T> boolean delete(T t);
   <T, S> PersistentStoreQuery<S> find(ReturnType<T, S> returnType);
 }
