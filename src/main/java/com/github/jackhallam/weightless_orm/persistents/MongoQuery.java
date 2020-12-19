@@ -62,6 +62,10 @@ public class MongoQuery<T> implements PersistentStoreQuery<T> {
     }
   }
 
+  public Query<T> exposeQuery() {
+    return query;
+  }
+
   private Map<Class<? extends Annotation>, BiConsumer<FieldEnd<?>, Object>> getFiltersMap() {
     Map<Class<? extends Annotation>, BiConsumer<FieldEnd<?>, Object>> filtersMap = new HashMap<>();
     filtersMap.put(Equals.class, (fieldEnd, fieldValue) -> fieldEnd.equal(fieldValue));

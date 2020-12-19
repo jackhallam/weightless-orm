@@ -30,6 +30,16 @@ public class InMemoryPersistentStore implements PersistentStore {
   }
 
   @Override
+  public <T> boolean delete(T t) {
+    Class<T> clazz = (Class<T>) t.getClass();
+    List<T> list = (List<T>) mapping.get(clazz);
+    if (list == null) {
+      return false;
+    }
+    return list.remove(t);
+  }
+
+  @Override
   public <T, S> InMemoryPersistentStoreQuery<S> find(ReturnType<T, S> returnType) {
     Class<S> clazz = returnType.getInner();
     List<S> list = (List<S>) mapping.get(clazz);

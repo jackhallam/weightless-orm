@@ -1,10 +1,12 @@
 package com.github.jackhallam.weightless_orm;
 
 import com.github.jackhallam.weightless_orm.annotations.Create;
+import com.github.jackhallam.weightless_orm.annotations.Delete;
 import com.github.jackhallam.weightless_orm.annotations.Find;
 import com.github.jackhallam.weightless_orm.annotations.FindOrCreate;
 import com.github.jackhallam.weightless_orm.annotations.Update;
 import com.github.jackhallam.weightless_orm.interceptors.CreateOrUpdateInterceptor;
+import com.github.jackhallam.weightless_orm.interceptors.DeleteInterceptor;
 import com.github.jackhallam.weightless_orm.interceptors.FindInterceptor;
 import com.github.jackhallam.weightless_orm.interceptors.FindOrCreateInterceptor;
 import com.github.jackhallam.weightless_orm.persistents.PersistentStore;
@@ -38,6 +40,8 @@ public class Weightless implements Closeable {
         .intercept(MethodDelegation.to(new FindInterceptor(persistentStore)))
         .method(ElementMatchers.isAnnotatedWith(FindOrCreate.class))
         .intercept(MethodDelegation.to(new FindOrCreateInterceptor(persistentStore)))
+        .method(ElementMatchers.isAnnotatedWith(Delete.class))
+        .intercept(MethodDelegation.to(new DeleteInterceptor(persistentStore)))
         .make()
         .load(getClass().getClassLoader())
         .getLoaded();

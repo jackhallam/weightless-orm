@@ -26,8 +26,12 @@ public class MongoPersistentStore implements PersistentStore {
   }
 
   public <T> MongoQuery<T> save(T t) {
-    Class<T> clazz = (Class<T>) t.getClass();
     datastore.save(t);
+    return findItemByFields(t);
+  }
+
+  private <T> MongoQuery<T> findItemByFields(T t) {
+    Class<T> clazz = (Class<T>) t.getClass();
     MongoQuery<T> mongoQuery = new MongoQuery<>(datastore.find(clazz));
     for (java.lang.reflect.Field field : clazz.getDeclaredFields()) {
       try {
@@ -42,8 +46,13 @@ public class MongoPersistentStore implements PersistentStore {
     return mongoQuery;
   }
 
+  @Override
+  public <T> boolean delete(T t) {
+    return datastore.delete(findItemByFields(t).exposeQuery()).getN() > 0;
+  }
+
   public <T, S> MongoQuery<S> find(ReturnType<T, S> returnType) {
-    return new MongoQuery<S>(datastore.find(returnType.getInner()));
+    return new MongoQuery<>(datastore.find(returnType.getInner()));
   }
 
   /**
