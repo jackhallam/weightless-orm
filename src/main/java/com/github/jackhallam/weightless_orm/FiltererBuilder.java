@@ -14,6 +14,9 @@ public class FiltererBuilder {
     subFilters = new ArrayList<>();
     for (Parameter<?> parameter : parameters) {
       List<? extends Annotation> annotations = parameter.getAnnotations();
+      if (annotations.isEmpty()) {
+        continue; // Skip if there are not any annotations (such as the @Update case)
+      }
       if (annotations.size() != 2) {
         throw new WeightlessORMException("Expected 2 annotations on the parameter but found " + annotations.size());
       }
