@@ -5,10 +5,11 @@ import com.github.jackhallam.weightless_orm.annotations.Delete;
 import com.github.jackhallam.weightless_orm.annotations.Find;
 import com.github.jackhallam.weightless_orm.annotations.FindOrCreate;
 import com.github.jackhallam.weightless_orm.annotations.Update;
-import com.github.jackhallam.weightless_orm.interceptors.CreateOrUpdateInterceptor;
+import com.github.jackhallam.weightless_orm.interceptors.CreateInterceptor;
 import com.github.jackhallam.weightless_orm.interceptors.DeleteInterceptor;
 import com.github.jackhallam.weightless_orm.interceptors.FindInterceptor;
 import com.github.jackhallam.weightless_orm.interceptors.FindOrCreateInterceptor;
+import com.github.jackhallam.weightless_orm.interceptors.UpdateInterceptor;
 import com.github.jackhallam.weightless_orm.persistents.PersistentStore;
 import net.bytebuddy.ByteBuddy;
 import net.bytebuddy.implementation.MethodDelegation;
@@ -33,9 +34,10 @@ public class Weightless implements Closeable {
     try {
       Class<? extends T> dynamicType = new ByteBuddy()
         .subclass(clazz)
-        .method(ElementMatchers.isAnnotatedWith(Create.class)
-          .or(ElementMatchers.isAnnotatedWith(Update.class)))
-        .intercept(MethodDelegation.to(new CreateOrUpdateInterceptor(persistentStore)))
+        .method(ElementMatchers.isAnnotatedWith(Create.class))
+        .intercept(MethodDelegation.to(new CreateInterceptor(persistentStore)))
+        .method(ElementMatchers.isAnnotatedWith(Update.class))
+        .intercept(MethodDelegation.to(new UpdateInterceptor(persistentStore)))
         .method(ElementMatchers.isAnnotatedWith(Find.class))
         .intercept(MethodDelegation.to(new FindInterceptor(persistentStore)))
         .method(ElementMatchers.isAnnotatedWith(FindOrCreate.class))

@@ -12,11 +12,11 @@ import net.bytebuddy.implementation.bind.annotation.RuntimeType;
 
 import java.util.List;
 
-public class CreateOrUpdateInterceptor {
+public class CreateInterceptor {
 
   private final PersistentStore persistentStore;
 
-  public CreateOrUpdateInterceptor(PersistentStore persistentStore) {
+  public CreateInterceptor(PersistentStore persistentStore) {
     this.persistentStore = persistentStore;
   }
 
