@@ -1,16 +1,15 @@
 package com.github.jackhallam.weightless_orm.interceptors;
 
-import com.github.jackhallam.weightless_orm.Parameter;
-import com.github.jackhallam.weightless_orm.ParametersBuilder;
-import com.github.jackhallam.weightless_orm.ReturnType;
-import com.github.jackhallam.weightless_orm.ReturnTypeBuilder;
 import com.github.jackhallam.weightless_orm.WeightlessORMException;
+import com.github.jackhallam.weightless_orm.interceptors.handlers.ConditionHandler;
+import com.github.jackhallam.weightless_orm.interceptors.handlers.ReturnHandler;
 import com.github.jackhallam.weightless_orm.persistents.PersistentStore;
 import net.bytebuddy.implementation.bind.annotation.AllArguments;
 import net.bytebuddy.implementation.bind.annotation.Origin;
 import net.bytebuddy.implementation.bind.annotation.RuntimeType;
 
-import java.util.List;
+import java.util.Iterator;
+import java.util.Optional;
 
 public class DeleteInterceptor {
 
@@ -24,16 +23,63 @@ public class DeleteInterceptor {
    * Intercept a @Delete method
    */
   @RuntimeType
-  public <T, S> boolean intercept(@AllArguments Object[] allArguments, @Origin java.lang.reflect.Method method) {
-    ReturnType<T, S> returnType = new ReturnTypeBuilder<T, S>().method(method).build();
-    if (!returnType.getOuter().equals(Boolean.class)) {
-      throw new WeightlessORMException("Method " + method.toGenericString() + " Expected return type " + Boolean.class + " but found " + returnType.getOuter());
-    }
-    List<Parameter<?>> parameters = new ParametersBuilder().method(method).args(allArguments).build();
-    if (parameters.size() != 1) {
-      throw new WeightlessORMException("Method " + method.toGenericString() + " Expected 1 Parameter, but found " + parameters.size());
+  public <T> Object intercept(@AllArguments Object[] allArguments, @Origin java.lang.reflect.Method method) {
+    // Build the handlers
+    ConditionHandler conditionHandler = new ConditionHandler(method.getParameters(), allArguments);
+    DeleteReturnHandler<T> deleteReturnHandler = new DeleteReturnHandler<>();
+
+    // Infer the return type
+    Class<T> clazz;
+    try {
+      clazz = (Class<T>) Class.forName(deleteReturnHandler.inferInnerTypeIfPresent((method.getGenericReturnType())).getTypeName());
+    } catch (ClassNotFoundException e) {
+      throw new WeightlessORMException(e);
     }
 
-    return persistentStore.delete(parameters.get(0).getValue());
+    // Get the iterator from the persistentStore
+    Iterable<T> deletedObjectsIterable = persistentStore.delete(clazz, conditionHandler);
+
+    // Properly return objects
+    return deleteReturnHandler.pick((Class<Object>) method.getReturnType()).apply(deletedObjectsIterable);
+  }
+
+
+  public class DeleteReturnHandler<T> extends ReturnHandler<T> {
+
+    @Override
+    public void handleVoid(Iterable<T> tIterable) {
+      throw new WeightlessORMException("Delete requires an object type to be returned");
+    }
+
+    /**
+     * A return type of boolean/Boolean means return false on failure
+     */
+    @Override
+    public boolean handleBoolean(Iterable<T> tIterable) {
+      throw new WeightlessORMException("Delete requires an object type to be returned");
+    }
+
+    @Override
+    public Iterable<T> handleIterable(Iterable<T> tIterable) {
+      return tIterable;
+    }
+
+    @Override
+    public Optional<T> handleOptional(Iterable<T> tIterable) {
+      Iterator<T> iterator = tIterable.iterator();
+      if (!iterator.hasNext()) {
+        return Optional.empty();
+      }
+      return Optional.ofNullable(iterator.next());
+    }
+
+    @Override
+    public T handlePojo(Iterable<T> tIterable) {
+      Iterator<T> iterator = tIterable.iterator();
+      if (!iterator.hasNext()) {
+        return null;
+      }
+      return iterator.next();
+    }
   }
 }
