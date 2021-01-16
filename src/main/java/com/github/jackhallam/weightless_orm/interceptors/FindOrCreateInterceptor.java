@@ -66,7 +66,9 @@ public class FindOrCreateInterceptor {
 
     T t = createDBObject(clazz, fields);
 
-    return findOrCreateReturnHandler.pick((Class<Object>) method.getReturnType()).apply(Collections.singletonList(t));
+    Iterable<T> createdObjectsIterable = persistentStore.create(Collections.singletonList(t));
+
+    return findOrCreateReturnHandler.pick((Class<Object>) method.getReturnType()).apply(createdObjectsIterable);
   }
 
   private <T> T createDBObject(Class<T> clazz, Map<String, Object> fields) {
