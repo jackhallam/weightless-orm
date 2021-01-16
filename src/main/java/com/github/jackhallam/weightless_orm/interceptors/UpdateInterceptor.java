@@ -1,6 +1,7 @@
 package com.github.jackhallam.weightless_orm.interceptors;
 
 import com.github.jackhallam.weightless_orm.WeightlessORMException;
+import com.github.jackhallam.weightless_orm.interceptors.handlers.ConditionHandler;
 import com.github.jackhallam.weightless_orm.interceptors.handlers.ReturnHandler;
 import com.github.jackhallam.weightless_orm.persistents.PersistentStore;
 import net.bytebuddy.implementation.bind.annotation.AllArguments;
@@ -39,12 +40,13 @@ public class UpdateInterceptor {
 //    }
 //    return persistentStore.save(parameters.get(0).getValue()).find(returnType);
 
+    // Convert the parameters passed in to the update method to an iterable of objects to create in the persistentStore
+    Iterable<T> objectsToUpdateIterable = getObjectsToUpdate(method.getParameters(), allArguments);
 
-    // Convert the parameters passed in to the create method to an iterable of objects to create in the persistentStore
-    Iterable<T> objectsToCreateIterable = getObjectsToUpdate(method.getParameters(), allArguments);
+    ConditionHandler conditionHandler = new ConditionHandler(method.getParameters(), allArguments);
 
     // The persistentStore creates the objects and returns an iterable of the created objects
-    Iterable<T> updatedObjectsIterable = persistentStore.create(objectsToCreateIterable);
+    Iterable<T> updatedObjectsIterable = persistentStore.update(objectsToUpdateIterable, conditionHandler);
 
     // Properly return these created objects to the user
     UpdateReturnHandler<T> updateReturnHandler = new UpdateReturnHandler<>();

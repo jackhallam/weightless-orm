@@ -21,6 +21,7 @@ import dev.morphia.query.internal.MorphiaCursor;
 import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -116,8 +117,23 @@ public class MongoPersistentStore implements PersistentStore {
   }
 
   @Override
-  public <T> Iterable<T> update(Iterable<T> tIterable) {
-    return save(tIterable);
+  public <T> Iterable<T> update(Iterable<T> tIterable, ConditionHandler conditionHandler) {
+    Iterator<T> tIterator = tIterable.iterator();
+    if (!tIterator.hasNext()) {
+      throw new WeightlessORMException("No object to use to update.");
+    }
+
+    T t = tIterator.next();
+
+    if (tIterator.hasNext()) {
+      throw new WeightlessORMException("Expected only one object to update but found more than one.");
+    }
+
+    Class<T> clazz = (Class<T>) t.getClass();
+
+    this.delete(clazz, conditionHandler); // We don't check output because we don't really care how many we delete
+
+    return save(Collections.singletonList(t)); // Convert that single object back to iterable and save it
   }
 
   @Override

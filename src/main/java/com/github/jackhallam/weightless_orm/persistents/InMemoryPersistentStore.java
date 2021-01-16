@@ -15,8 +15,10 @@ import com.github.jackhallam.weightless_orm.interceptors.handlers.SortHandler;
 import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
@@ -59,8 +61,23 @@ public class InMemoryPersistentStore implements PersistentStore {
   }
 
   @Override
-  public <T> Iterable<T> update(Iterable<T> tIterable) {
-    return null;
+  public <T> Iterable<T> update(Iterable<T> tIterable, ConditionHandler conditionHandler) {
+    Iterator<T> tIterator = tIterable.iterator();
+    if (!tIterator.hasNext()) {
+      throw new WeightlessORMException("No object to use to update.");
+    }
+
+    T t = tIterator.next();
+
+    if (tIterator.hasNext()) {
+      throw new WeightlessORMException("Expected only one object to update but found more than one.");
+    }
+
+    Class<T> clazz = (Class<T>) t.getClass();
+
+    this.delete(clazz, conditionHandler); // We don't check output because we don't really care how many we delete
+
+    return create(Collections.singletonList(t)); // Convert that single object back to iterable and save it
   }
 
   @Override
