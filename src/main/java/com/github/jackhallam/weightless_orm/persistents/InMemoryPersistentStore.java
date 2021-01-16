@@ -1,6 +1,5 @@
 package com.github.jackhallam.weightless_orm.persistents;
 
-import com.github.jackhallam.weightless_orm.ReturnType;
 import com.github.jackhallam.weightless_orm.WeightlessORMException;
 import com.github.jackhallam.weightless_orm.annotations.Sort;
 import com.github.jackhallam.weightless_orm.annotations.field_filters.DoesNotExist;
@@ -157,40 +156,6 @@ public class InMemoryPersistentStore implements PersistentStore {
     filtersMap.put(Exists.class, (testerObject, dbObject) -> dbObject != null);
     filtersMap.put(DoesNotExist.class, (testerObject, dbObject) -> dbObject == null);
     return filtersMap;
-  }
-
-  @Override
-  public <T> InMemoryPersistentStoreQuery<T> save(T t) {
-    Class<T> clazz = (Class<T>) t.getClass();
-    List<T> list = (List<T>) mapping.get(clazz);
-    if (list == null) {
-      mapping.put(clazz, new ArrayList<>());
-      list = (List<T>) mapping.get(clazz);
-    }
-    list.add(t);
-    List<T> returnList = new ArrayList<>();
-    returnList.add(t);
-    return new InMemoryPersistentStoreQuery<>(clazz, returnList);
-  }
-
-  @Override
-  public <T> boolean delete(T t) {
-    Class<T> clazz = (Class<T>) t.getClass();
-    List<T> list = (List<T>) mapping.get(clazz);
-    if (list == null) {
-      return false;
-    }
-    return list.remove(t);
-  }
-
-  @Override
-  public <T, S> InMemoryPersistentStoreQuery<S> find(ReturnType<T, S> returnType) {
-    Class<S> clazz = returnType.getInner();
-    List<S> list = (List<S>) mapping.get(clazz);
-    if (list == null) {
-      return new InMemoryPersistentStoreQuery<>(clazz, new ArrayList<>());
-    }
-    return new InMemoryPersistentStoreQuery<>(clazz, list);
   }
 
   /**

@@ -1,6 +1,5 @@
 package com.github.jackhallam.weightless_orm.persistents;
 
-import com.github.jackhallam.weightless_orm.ReturnType;
 import com.github.jackhallam.weightless_orm.WeightlessORMException;
 import com.github.jackhallam.weightless_orm.annotations.Sort;
 import com.github.jackhallam.weightless_orm.annotations.field_filters.DoesNotExist;
@@ -49,43 +48,6 @@ public class MongoPersistentStore implements PersistentStore {
   @Override
   public <T> Iterable<T> create(Iterable<T> tIterable) {
     return save(tIterable);
-  }
-
-  private <T> Iterable<T> save(Iterable<T> tIterable) {
-    // Keep a list of the objects
-    List<T> saved = StreamSupport.stream(tIterable.spliterator(), false).collect(Collectors.toList());
-
-    // Save the objects
-    datastore.save(saved);
-
-    Iterator<T> savedIterator = saved.iterator();
-
-    // Provide an iterator that pulls the objects
-    return () -> new Iterator<T>() {
-      @Override
-      public boolean hasNext() {
-        return savedIterator.hasNext();
-      }
-
-      @Override
-      public T next() {
-        // Using the saved object
-        T t = savedIterator.next();
-        Class<T> clazz = (Class<T>) t.getClass();
-        // Pull the object from the db by fields
-        Query<T> query = datastore.find(clazz);
-        for (java.lang.reflect.Field field : clazz.getDeclaredFields()) {
-          boolean isAccessible = field.isAccessible();
-          field.setAccessible(true);
-          try {
-            query.field(field.getName()).equal(field.get(t));
-          } catch (IllegalAccessException ignored) {
-          }
-          field.setAccessible(isAccessible);
-        }
-        return query.find().next();
-      }
-    };
   }
 
   @Override
@@ -164,6 +126,44 @@ public class MongoPersistentStore implements PersistentStore {
     return deleted;
   }
 
+
+  private <T> Iterable<T> save(Iterable<T> tIterable) {
+    // Keep a list of the objects
+    List<T> saved = StreamSupport.stream(tIterable.spliterator(), false).collect(Collectors.toList());
+
+    // Save the objects
+    datastore.save(saved);
+
+    Iterator<T> savedIterator = saved.iterator();
+
+    // Provide an iterator that pulls the objects
+    return () -> new Iterator<T>() {
+      @Override
+      public boolean hasNext() {
+        return savedIterator.hasNext();
+      }
+
+      @Override
+      public T next() {
+        // Using the saved object
+        T t = savedIterator.next();
+        Class<T> clazz = (Class<T>) t.getClass();
+        // Pull the object from the db by fields
+        Query<T> query = datastore.find(clazz);
+        for (java.lang.reflect.Field field : clazz.getDeclaredFields()) {
+          boolean isAccessible = field.isAccessible();
+          field.setAccessible(true);
+          try {
+            query.field(field.getName()).equal(field.get(t));
+          } catch (IllegalAccessException ignored) {
+          }
+          field.setAccessible(isAccessible);
+        }
+        return query.find().next();
+      }
+    };
+  }
+
   private Map<Class<? extends Annotation>, BiConsumer<FieldEnd<?>, Object>> getFiltersMap() {
     Map<Class<? extends Annotation>, BiConsumer<FieldEnd<?>, Object>> filtersMap = new HashMap<>();
     filtersMap.put(Equals.class, (fieldEnd, fieldValue) -> fieldEnd.equal(fieldValue));
@@ -173,36 +173,6 @@ public class MongoPersistentStore implements PersistentStore {
     filtersMap.put(Exists.class, (fieldEnd, fieldValue) -> fieldEnd.exists());
     filtersMap.put(DoesNotExist.class, (fieldEnd, fieldValue) -> fieldEnd.doesNotExist());
     return filtersMap;
-  }
-
-  public <T> MongoQuery<T> save(T t) {
-    datastore.save(t);
-    return findItemByFields(t);
-  }
-
-  private <T> MongoQuery<T> findItemByFields(T t) {
-    Class<T> clazz = (Class<T>) t.getClass();
-    MongoQuery<T> mongoQuery = new MongoQuery<>(datastore.find(clazz));
-    for (java.lang.reflect.Field field : clazz.getDeclaredFields()) {
-      try {
-        boolean isAccessible = field.isAccessible();
-        field.setAccessible(true);
-        mongoQuery.filter(field.getName(), () -> Equals.class, field.get(t));
-        field.setAccessible(isAccessible);
-      } catch (IllegalAccessException e) {
-        throw new WeightlessORMException(e);
-      }
-    }
-    return mongoQuery;
-  }
-
-  @Override
-  public <T> boolean delete(T t) {
-    return datastore.delete(findItemByFields(t).exposeQuery()).getN() > 0;
-  }
-
-  public <T, S> MongoQuery<S> find(ReturnType<T, S> returnType) {
-    return new MongoQuery<>(datastore.find(returnType.getInner()));
   }
 
   /**
