@@ -1,25 +1,18 @@
 package com.github.jackhallam.weightless_orm.interceptors;
 
-import com.github.jackhallam.weightless_orm.Filterer;
-import com.github.jackhallam.weightless_orm.FiltererBuilder;
-import com.github.jackhallam.weightless_orm.Parameter;
-import com.github.jackhallam.weightless_orm.ParametersBuilder;
-import com.github.jackhallam.weightless_orm.ReturnType;
-import com.github.jackhallam.weightless_orm.ReturnTypeBuilder;
-import com.github.jackhallam.weightless_orm.Sorter;
-import com.github.jackhallam.weightless_orm.SorterBuilder;
 import com.github.jackhallam.weightless_orm.WeightlessORMException;
-import com.github.jackhallam.weightless_orm.annotations.Field;
 import com.github.jackhallam.weightless_orm.annotations.field_filters.Equals;
+import com.github.jackhallam.weightless_orm.interceptors.handlers.ConditionHandler;
+import com.github.jackhallam.weightless_orm.interceptors.handlers.ReturnHandler;
+import com.github.jackhallam.weightless_orm.interceptors.handlers.SortHandler;
 import com.github.jackhallam.weightless_orm.persistents.PersistentStore;
-import com.github.jackhallam.weightless_orm.persistents.PersistentStoreQuery;
 import net.bytebuddy.implementation.bind.annotation.AllArguments;
 import net.bytebuddy.implementation.bind.annotation.Origin;
 import net.bytebuddy.implementation.bind.annotation.RuntimeType;
 
-import java.lang.annotation.Annotation;
+import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Optional;
 
@@ -35,43 +28,45 @@ public class FindOrCreateInterceptor {
    * Intercept a @FindOrCreate method
    */
   @RuntimeType
-  public <T, S> T intercept(@AllArguments Object[] allArguments, @Origin java.lang.reflect.Method method) {
-    ReturnType<T, S> returnType = new ReturnTypeBuilder<T, S>().method(method).build();
-    List<Parameter<?>> parameters = new ParametersBuilder().method(method).args(allArguments).build();
-    Filterer filterer = new FiltererBuilder().parameters(parameters).build();
-    Sorter sorter = new SorterBuilder().method(method).build();
-
-    PersistentStoreQuery<S> query = persistentStore.find(returnType);
-    filterer.filter(query);
-    sorter.sort(query);
-    Optional<S> found = query.findForceOptional();
-    if (found.isPresent()) {
-      // Found what we were looking for, rerun with correct wrapper
-      return query.find(returnType);
-    }
-
-    // not found in db, create a new object and store it
-
-    Map<String, Object> fields = new HashMap<>();
-    for (int i = 0; i < method.getParameterCount(); i++) {
-      java.lang.reflect.Parameter parameter = method.getParameters()[i];
-      Annotation[] parameterAnnotations = parameter.getAnnotations();
-      String fieldName = null;
-      for (Annotation parameterAnnotation : parameterAnnotations) {
-        if (parameterAnnotation.annotationType().equals(Field.class)) {
-          fieldName = ((Field) parameterAnnotation).value();
-          fields.put(fieldName, null);
-        } else if (parameterAnnotation.annotationType().equals(Equals.class)) {
-          fields.put(fieldName, allArguments[i]);
-        } else {
-          fields.remove(fieldName);
-        }
+  public <T> Object intercept(@AllArguments Object[] allArguments, @Origin java.lang.reflect.Method method) {
+    SortHandler<T> sortHandler = new SortHandler<>(method);
+    ConditionHandler conditionHandler = new ConditionHandler(method.getParameters(), allArguments);
+    conditionHandler.getSubFiltersIterator().forEachRemaining(subFilter -> {
+      if (!subFilter.filterTypeAnnotation.annotationType().equals(Equals.class)) {
+        throw new WeightlessORMException("Only " + Equals.class + " allowed in FindOrCreate");
       }
-    }
-    S objectToStore = createDBObject(returnType.getInner(), fields);
+    });
+    conditionHandler = new ConditionHandler(method.getParameters(), allArguments);
 
-    query = persistentStore.save(objectToStore);
-    return query.find(returnType);
+    FindOrCreateReturnHandler<T> findOrCreateReturnHandler = new FindOrCreateReturnHandler<>();
+
+    // Infer the return type
+    Class<T> clazz;
+    try {
+      clazz = (Class<T>) Class.forName(findOrCreateReturnHandler.inferInnerTypeIfPresent((method.getGenericReturnType())).getTypeName());
+    } catch (ClassNotFoundException e) {
+      throw new WeightlessORMException(e);
+    }
+
+    // Get the iterator from the persistentStore
+    Iterable<T> foundObjectsIterable = persistentStore.find(clazz, conditionHandler, sortHandler);
+
+    if (foundObjectsIterable.iterator().hasNext()) {
+      // Properly return objects
+      return findOrCreateReturnHandler.pick((Class<Object>) method.getReturnType()).apply(foundObjectsIterable);
+    }
+
+    // Object not found, need to create
+
+    conditionHandler = new ConditionHandler(method.getParameters(), allArguments);
+    Map<String, Object> fields = new HashMap<>();
+    conditionHandler.getSubFiltersIterator().forEachRemaining(subFilter -> {
+      fields.put(subFilter.fieldName, subFilter.value);
+    });
+
+    T t = createDBObject(clazz, fields);
+
+    return findOrCreateReturnHandler.pick((Class<Object>) method.getReturnType()).apply(Collections.singletonList(t));
   }
 
   private <T> T createDBObject(Class<T> clazz, Map<String, Object> fields) {
@@ -91,6 +86,42 @@ public class FindOrCreateInterceptor {
       return t;
     } catch (InstantiationException | IllegalAccessException e) {
       throw new WeightlessORMException(e);
+    }
+  }
+
+  public class FindOrCreateReturnHandler<T> extends ReturnHandler<T> {
+
+    @Override
+    public void handleVoid(Iterable<T> tIterable) {
+      throw new WeightlessORMException("Void cannot be the return type of FindOrCreate");
+    }
+
+    @Override
+    public boolean handleBoolean(Iterable<T> tIterable) {
+      throw new WeightlessORMException("Boolean cannot be the return type of FindOrCreate");
+    }
+
+    @Override
+    public Iterable<T> handleIterable(Iterable<T> tIterable) {
+      return tIterable;
+    }
+
+    @Override
+    public Optional<T> handleOptional(Iterable<T> tIterable) {
+      Iterator<T> iterator = tIterable.iterator();
+      if (!iterator.hasNext()) {
+        return Optional.empty();
+      }
+      return Optional.ofNullable(iterator.next());
+    }
+
+    @Override
+    public T handlePojo(Iterable<T> tIterable) {
+      Iterator<T> iterator = tIterable.iterator();
+      if (!iterator.hasNext()) {
+        return null;
+      }
+      return iterator.next();
     }
   }
 }

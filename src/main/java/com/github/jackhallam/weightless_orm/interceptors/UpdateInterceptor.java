@@ -25,21 +25,6 @@ public class UpdateInterceptor {
    */
   @RuntimeType
   public <T> Object intercept(@AllArguments Object[] allArguments, @Origin java.lang.reflect.Method method) {
-//    ReturnType<T, S> returnType = new ReturnTypeBuilder<T, S>().method(method).build();
-//    List<Parameter<?>> parameters = new ParametersBuilder().method(method).args(allArguments).build();
-//    Filterer filterer = new FiltererBuilder().parameters(parameters).build();
-//    PersistentStoreQuery<S> query = persistentStore.find(returnType);
-//    filterer.filter(query);
-//    Optional<S> found = query.findForceOptional();
-//    if (!found.isPresent()) {
-//      return query.find(returnType);
-//    }
-//    boolean deleted = persistentStore.delete(found.get());
-//    if (!deleted) {
-//      throw new WeightlessORMException("Could not overwrite object " + found.get().toString());
-//    }
-//    return persistentStore.save(parameters.get(0).getValue()).find(returnType);
-
     // Convert the parameters passed in to the update method to an iterable of objects to create in the persistentStore
     Iterable<T> objectsToUpdateIterable = getObjectsToUpdate(method.getParameters(), allArguments);
 
