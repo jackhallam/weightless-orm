@@ -1,4 +1,4 @@
-package com.github.jackhallam.weightless_orm;
+package com.github.jackhallam.weightless_orm.interceptors.handlers;
 
 import com.github.jackhallam.weightless_orm.annotations.Sort;
 import com.github.jackhallam.weightless_orm.annotations.Sorts;
@@ -7,15 +7,16 @@ import java.lang.annotation.Annotation;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-public class SorterBuilder {
+public class SortHandler<T> {
 
   private List<String> fieldNames;
   private Map<String, Sort.Direction> directionMap;
 
-  public SorterBuilder method(java.lang.reflect.Method method) {
+  public SortHandler(java.lang.reflect.Method method) {
     List<Sort> sortAnnotations = new ArrayList<>();
     for (Annotation methodLevelAnnotation : method.getDeclaredAnnotations()) {
       if (methodLevelAnnotation.annotationType().equals(Sorts.class)) {
@@ -32,10 +33,36 @@ public class SorterBuilder {
       fieldNames.add(sort.onField());
       directionMap.put(sort.onField(), sort.direction());
     }
-    return this;
   }
 
-  public Sorter build() {
-    return new Sorter(fieldNames, directionMap);
+  public Iterator<SortContainer> getSortsIterator() {
+    Iterator<String> fieldNamesIterator = fieldNames.iterator();
+    return new Iterator<SortContainer>() {
+      @Override
+      public boolean hasNext() {
+        return fieldNamesIterator.hasNext();
+      }
+
+      @Override
+      public SortContainer next() {
+        SortContainer sortContainer = new SortContainer();
+        sortContainer.fieldName = fieldNamesIterator.next();
+        sortContainer.direction = directionMap.get(sortContainer.fieldName);
+        return sortContainer;
+      }
+    };
+  }
+
+  public List<String> getFieldNames() {
+    return fieldNames;
+  }
+
+  public Map<String, Sort.Direction> getDirectionMap() {
+    return directionMap;
+  }
+
+  public static class SortContainer {
+    public String fieldName;
+    public Sort.Direction direction;
   }
 }

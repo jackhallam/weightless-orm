@@ -3,14 +3,17 @@ package com.github.jackhallam.weightless_orm.mongo;
 import com.github.jackhallam.weightless_orm.Weightless;
 import com.github.jackhallam.weightless_orm.annotations.Create;
 import com.github.jackhallam.weightless_orm.annotations.Delete;
+import com.github.jackhallam.weightless_orm.annotations.Field;
 import com.github.jackhallam.weightless_orm.annotations.Find;
+import com.github.jackhallam.weightless_orm.annotations.field_filters.Equals;
 import org.junit.Test;
 
 import java.util.List;
 import java.util.function.Supplier;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 public class TestDelete extends TestBase {
@@ -25,8 +28,8 @@ public class TestDelete extends TestBase {
     testObject.otherTestField = 1;
     testObject = getDal(Dal.class).create(testObject);
 
-    boolean deleted = getDal(Dal.class).delete(testObject);
-    assertTrue(deleted);
+    TestObject deleted = getDal(Dal.class).delete("hello");
+    assertNotNull(deleted);
 
     List<TestObject> found = getDal(Dal.class).findAll();
     assertTrue(found.isEmpty());
@@ -43,12 +46,12 @@ public class TestDelete extends TestBase {
     notFoundTestObject.testField = "world";
     notFoundTestObject.otherTestField = 2;
 
-    boolean deleted = getDal(Dal.class).delete(notFoundTestObject);
-    assertFalse(deleted);
+    TestObject deleted = getDal(Dal.class).delete("world");
+    assertNull(deleted);
 
     List<TestObject> found = getDal(Dal.class).findAll();
-    assertEquals(testObject.testField , found.get(0).testField);
-    assertEquals(testObject.otherTestField , found.get(0).otherTestField);
+    assertEquals(testObject.testField, found.get(0).testField);
+    assertEquals(testObject.otherTestField, found.get(0).otherTestField);
   }
 
   public static class TestObject {
@@ -61,7 +64,7 @@ public class TestDelete extends TestBase {
     List<TestObject> findAll();
 
     @Delete
-    boolean delete(TestObject testObject);
+    TestObject delete(@Field("testField") @Equals String testField);
 
     @Create
     TestObject create(TestObject testObject);
