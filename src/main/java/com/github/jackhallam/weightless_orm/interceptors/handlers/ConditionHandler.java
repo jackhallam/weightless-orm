@@ -12,6 +12,10 @@ public class ConditionHandler {
 
   private List<SubFilter<?>> subFilters;
 
+  public ConditionHandler() {
+    this.subFilters = new ArrayList<>();
+  }
+
   public ConditionHandler(java.lang.reflect.Parameter[] parameters, Object[] allArguments) {
     this.subFilters = buildSubFilters(parameters, allArguments);
   }
@@ -44,7 +48,7 @@ public class ConditionHandler {
     return subFilters;
   }
 
-  public class SubFilter<AnnotationType extends Annotation> {
+  public static class SubFilter<AnnotationType extends Annotation> {
     public String fieldName;
     public Object value;
     public AnnotationType filterTypeAnnotation;
