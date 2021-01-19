@@ -16,6 +16,11 @@ public class SortHandler<T> {
   private List<String> fieldNames;
   private Map<String, Sort.Direction> directionMap;
 
+  public SortHandler() {
+    this.fieldNames = new ArrayList<>();
+    this.directionMap = new HashMap<>();
+  }
+
   public SortHandler(java.lang.reflect.Method method) {
     List<Sort> sortAnnotations = new ArrayList<>();
     for (Annotation methodLevelAnnotation : method.getDeclaredAnnotations()) {
