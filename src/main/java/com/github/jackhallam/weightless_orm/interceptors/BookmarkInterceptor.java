@@ -37,7 +37,6 @@ public class BookmarkInterceptor {
    */
   @RuntimeType
   public <T> Object intercept(@AllArguments Object[] allArguments, @Origin java.lang.reflect.Method method) {
-
     BookmarkReturnHandler<T> bookmarkReturnHandler = new BookmarkReturnHandler<>();
 
     // Infer the return type
@@ -48,26 +47,14 @@ public class BookmarkInterceptor {
       throw new WeightlessORMException(e);
     }
 
-    String bookmarkId = DEFAULT_BOOKMARK_ID;
-    if (method.getParameters().length > 1) {
-      throw new WeightlessORMException("Bookmark expects 0 or 1 parameter");
-    }
-    if (method.getParameters().length == 1) {
-      Parameter parameter = method.getParameters()[0];
-      if (!parameter.getType().equals(String.class)) {
-        throw new WeightlessORMException("Bookmark with one parameter expects a String bookmark id");
-      }
-      bookmarkId = (String) allArguments[0];
-    }
-
+    String bookmarkId = getBookmarkId(method.getParameters(), allArguments);
     InternalBookmark internalBookmark = weightless.get(InternalBookmark.InternalBookmarkAccess.class).findOrCreateInternalBookmarkById(bookmarkId);
-
-    boolean overflowed = false;
 
     Iterable<T> tIterable = persistentStore.find(clazz, new ConditionHandler(), new SortHandler<>());
     Iterator<T> tIterator = tIterable.iterator();
 
     // step through the iterator until the "next" is the one we care about
+    boolean overflowed = false;
     for (int i = 0; i < internalBookmark.pointer; i++) {
       // We probably ran off the end
       if (!tIterator.hasNext()) {
@@ -101,6 +88,21 @@ public class BookmarkInterceptor {
     weightless.get(InternalBookmark.InternalBookmarkAccess.class).updateInternalBookmarkById(internalBookmark, internalBookmark.id);
 
     return bookmarkReturnHandler.pick((Class<Object>) method.getReturnType()).apply(output);
+  }
+
+  private String getBookmarkId(Parameter[] parameters, Object[] allArguments) {
+    String bookmarkId = DEFAULT_BOOKMARK_ID;
+    if (parameters.length > 1) {
+      throw new WeightlessORMException("Bookmark expects 0 or 1 parameter");
+    }
+    if (parameters.length == 1) {
+      Parameter parameter = parameters[0];
+      if (!parameter.getType().equals(String.class)) {
+        throw new WeightlessORMException("Bookmark with one parameter expects a String bookmark id");
+      }
+      bookmarkId = (String) allArguments[0];
+    }
+    return bookmarkId;
   }
 
   public static class InternalBookmark {
