@@ -178,11 +178,8 @@ interface PersonAccess {
   
   ...
 
-  // DO NOT RETURN VOID OR BOOLEAN FOR @Delete!
-  @Delete
-  void delete(@Field("name") @Equals String name); // 🚫
-
   // Return the newly deleted object
+  // DO NOT RETURN VOID OR BOOLEAN FOR @Delete!
   @Delete
   Person delete(@Field("name") @Equals String name);
 

@@ -8,50 +8,45 @@ import com.github.jackhallam.weightless_orm.annotations.field_filters.DoesNotExi
 import com.github.jackhallam.weightless_orm.annotations.field_filters.Exists;
 import org.junit.Test;
 
-import java.util.Optional;
 import java.util.function.Supplier;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
-public class TestExistence extends TestBase {
-
-  public TestExistence(Supplier<Weightless> weightlessSupplier) {
+public class TestFilters extends TestBase {
+  public TestFilters(Supplier<Weightless> weightlessSupplier) {
     super(weightlessSupplier);
   }
 
   @Test
   public void testExistsSuccess() throws Exception {
     TestObject testObject = new TestObject();
-    testObject.testField = "abc";
-    testObject.otherTestField = 5;
+    testObject.fieldOne = "abc";
+    testObject.fieldTwo = 5;
     getDal(Dal.class).create(testObject);
-    Optional<TestObject> foundOptional = getDal(Dal.class).findObjectWhereTestFieldExists(null);
-    assertTrue(foundOptional.isPresent());
-    assertEquals(testObject.otherTestField, foundOptional.get().otherTestField);
+    TestObject found = getDal(Dal.class).findObjectWhereTestFieldExists(null);
+    assertEquals(testObject.fieldTwo, found.fieldTwo);
   }
 
   @Test
   public void testDoesNotExistSuccess() throws Exception {
     TestObject testObject = new TestObject();
-    testObject.otherTestField = 5;
+    testObject.fieldTwo = 5;
     getDal(Dal.class).create(testObject);
-    Optional<TestObject> foundOptional = getDal(Dal.class).findObjectWhereTestFieldDoesNotExist(null);
-    assertTrue(foundOptional.isPresent());
-    assertEquals(testObject.otherTestField, foundOptional.get().otherTestField);
+    TestObject found = getDal(Dal.class).findObjectWhereTestFieldDoesNotExist(null);
+    assertEquals(testObject.fieldTwo, found.fieldTwo);
   }
 
   public static class TestObject {
-    public String testField;
-    public int otherTestField;
+    public String fieldOne;
+    public int fieldTwo;
   }
 
   public interface Dal {
     @Find
-    Optional<TestObject> findObjectWhereTestFieldExists(@Field("testField") @Exists Void na);
+    TestObject findObjectWhereTestFieldExists(@Field("fieldOne") @Exists Void na);
 
     @Find
-    Optional<TestObject> findObjectWhereTestFieldDoesNotExist(@Field("testField") @DoesNotExist Void na);
+    TestObject findObjectWhereTestFieldDoesNotExist(@Field("fieldOne") @DoesNotExist Void na);
 
     @Create
     TestObject create(TestObject testObject);
