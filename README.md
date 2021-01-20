@@ -114,8 +114,8 @@ interface PersonAccess {
   @Find
   Person findByNameAndAge(@Field("name") @Equals String name, @Field("age") @Equals int age);
 
-  // Many filters are available
-  // @DoesNotExist, @Equals, @Exists, @Gte, @HasAnyOf, @Lte
+  // Many filters are available...
+  // @Contains, @ContainsIgnoreCase, @DoesNotExist, @EndsWith, @EndsWithIgnoreCase, @Equals, @Exists, @GreaterThan, @GreaterThanOrEqualTo, @HasAnyOf, @HasNoneOf, @LessThan, @LessThanOrEqualTo, @StartsWith, @StartsWithIgnoreCase
   @Find
   Person findWhereAgeLessThanOrEqualTo(@Field("age") @Lte int maxAgeInclusive);
 
