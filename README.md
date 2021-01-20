@@ -34,41 +34,181 @@ Add Weightless to your project with [Jitpack](https://jitpack.io/#jackhallam/wei
 <dependency>
   <groupId>com.github.jackhallam</groupId>
   <artifactId>weightless-orm</artifactId>
-  <version>d35b2241f9</version>
+  <version>see Jitpack for latest version</version>
 </dependency>
 ```
 
-### Usage
-Assume we have an object we want to read and write to a database
+### Basic Usage
+Assume we have a `Person` object we want to read and write to a database
 ```java
-class MyObject {
-  String foo;
-  int bar;
+class Person {
+  String name;
+  int age;
 }
 ```
-Define an interface that describes how to access our objects
+We can define a `PersonAccess` interface that describes how to access `Person` objects
 ```java
-interface MyObjectAccess {
-  @Find
-  TestObject find(@Field("foo") @Equals String foo);
-
-  @Find
-  @Sort(onField = "bar")
-  List<TestObject> findAllSorted();
-
+interface PersonAccess {
   @Create
-  TestObject create(TestObject testObject);
+  void create(Person person);
+  
+  @Find
+  Person findByName(@Field("name") @Equals String name);
 }
 ```
-The Weightless library will fill in the access interface at runtime
+We never created a class that implemented the interface `PersonAccess`. Instead, the Weightless library creates the concrete implementation at runtime. Magic! 🪄✨
 ```java
 Weightless weightless = WeightlessORMBuilder.inMemory().build(); // In-Memory database for local testing
-MyObjectAccess access = weightless.get(MyObjectAccess.class);
-```
-```java
-access.create(new MyObject("hello", 99));
-access.find("hello"); // { "foo": "hello", "bar": 99 }
+PersonAccess personAccess = weightless.get(PersonAccess.class);
 
-access.create(new MyObject("world", 50));
-access.findAllSorted(); // [{ "foo": "world", "bar": 50 }, { "foo": "hello", "bar": 99 }]
+Person james = new Person("James", 30);
+personAccess.create(james);
+
+personAccess.findByName("James"); // { "name": "James", "age": 30 }
+```
+
+### Advanced Usage
+
+```java
+/**
+ * Let's look at the different features of the access objects
+ */
+interface PersonAccess {
+  ...
+
+  // Simple usage of @Create
+  @Create
+  void create(Person person);
+
+  // Return a boolean representing if the object was created or not
+  @Create
+  boolean toCreateOrNotToCreate(Person person); // Note: the names of these methods can be anything, its the annotation (i.e. @Create) that matters
+
+  // Return the created object
+  @Create
+  Person create(Person person);
+
+  // Return an Optional wrapping the created object
+  @Create
+  Optional<Person> createOptional(Person person);
+
+  // Provide multiple Person objects and return multiple Person objects
+  // - Any object extending Iterable is acceptable as the input
+  // - Iterable, Iterator, Array, List, and Stream are acceptable outputs
+  @Create
+  List<Person> createAll(List<Person> people);
+
+  @Create
+  Collection<Person> createAllAgain(Iterable<Person> people);
+
+  @Create
+  Stream<Person> createAllAnotherWay(Person[] people);
+  
+  ...
+
+  // Simple usage of @Find
+  @Find
+  Person find(@Field("name") @Equals String name);
+
+  // Filter on multiple attributes
+  @Find
+  Person findByNameAndAge(@Field("name") @Equals String name, @Field("age") @Equals int age);
+
+  // Many filters are available
+  // @DoesNotExist, @Equals, @Exists, @Gte, @HasAnyOf, @Lte
+  @Find
+  Person findWhereAgeLessThanOrEqualTo(@Field("age") @Lte int maxAgeInclusive);
+
+  // Return an Optional if you care about null safety
+  @Find
+  Optional<Person> findOptional(@Field("name") @Equals String name);
+
+  // Return multiple Person objects to find all
+  // Iterable, Iterator, Array, List, and Stream are acceptable outputs
+  @Find
+  List<Person> findAllWithName(@Field("name") @Equals String name);
+
+  // An empty filter finds all 
+  @Find
+  List<Person> findAll();
+
+  // Use @Sort to order your results. It defaults to ascending
+  @Find
+  @Sort(onField = "age")
+  List<Person> findAllWithNameSorted(@Field("name") @Equals String name);
+
+  // @Sort descending
+  @Find
+  @Sort(onField = "age", direction = Sort.Direction.DESCENDING)
+  List<Person> findAllWithNameSortedDescending(@Field("name") @Equals String name);
+
+  // Multiple @Sort
+  @Find
+  @Sort(onField = "age")
+  @Sort(onField = "name")
+  List<Person> findAllSortedByAgeThenName();
+
+  // @Sort even when you only return one object
+  @Find
+  @Sort(onField = "age")
+  Person findByNameSorted(@Field("name") @Equals String name);
+  
+  ...
+
+  // Basic usage of @Update.
+  // It will find the person by their name, then overwrite that entry with the provided person object.
+  @Update
+  void update(Person person, @Field("name") @Equals String name);
+
+  // Boolean represents whether the update was successful
+  @Update
+  boolean update(Person person, @Field("name") @Equals String name);
+
+  // Return the person object updated
+  @Update
+  Person update(Person person, @Field("name") @Equals String name);
+
+  // Return an optional of the person object updated
+  @Update
+  Optional<Person> updateOptional(Person person, @Field("name") @Equals String name);
+
+  // You technically can return multiple objects, but we only update one object at a time so the List would only have one element
+  @Update
+  List<Person> update(Person person, @Field("name") @Equals String name);
+  
+  ...
+
+  // DO NOT RETURN VOID OR BOOLEAN FOR @Delete!
+  @Delete
+  void delete(@Field("name") @Equals String name); // 🚫
+
+  // Return the newly deleted object
+  @Delete
+  Person delete(@Field("name") @Equals String name);
+
+  // Return an optional of the deleted object
+  @Delete
+  Optional<Person> delete(@Field("name") @Equals String name);
+
+  // Return multiple Person objects to find all deleted
+  // Iterable, Iterator, Array, List, and Stream are acceptable outputs
+  @Delete
+  List<Person> delete(@Field("name") @Equals String name);
+  
+  ...
+
+  // Find or create the person with the fields. Only use @Equals for the filters for @FindOrCreate.
+  @FindOrCreate
+  Person findOrCreatePerson(@Field("name") @Equals String name, @Field("age") @Equals int age);
+
+  ...
+
+  // Bookmark allows you to best-effort one-at-a-time loop through all the objects of a type while keeping your place persistent across threads and service restarts.
+  @Bookmark
+  Person getBookmark();
+  
+  // Provide a bookmark id if you want multiple bookmarks at once.
+  @Bookmark
+  Person getBookmark(String bookmarkId);
+}
 ```
