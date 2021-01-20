@@ -36,7 +36,7 @@ public class TestDelete extends TestBase {
   }
 
   @Test
-  public void testDeleteNotFoundFailure() throws Exception {
+  public void testDeleteNotFoundSuccess() throws Exception {
     TestObject testObject = new TestObject();
     testObject.testField = "hello";
     testObject.otherTestField = 1;
@@ -52,6 +52,12 @@ public class TestDelete extends TestBase {
     List<TestObject> found = getDal(Dal.class).findAll();
     assertEquals(testObject.testField, found.get(0).testField);
     assertEquals(testObject.otherTestField, found.get(0).otherTestField);
+  }
+
+  @Test
+  public void testDeleteEmptyDatabaseSuccess() throws Exception {
+    TestObject deleted = getDal(Dal.class).delete("world");
+    assertNull(deleted);
   }
 
   public static class TestObject {

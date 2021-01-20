@@ -117,7 +117,7 @@ interface PersonAccess {
   // Many filters are available...
   // @Contains, @ContainsIgnoreCase, @DoesNotExist, @EndsWith, @EndsWithIgnoreCase, @Equals, @Exists, @GreaterThan, @GreaterThanOrEqualTo, @HasAnyOf, @HasNoneOf, @LessThan, @LessThanOrEqualTo, @StartsWith, @StartsWithIgnoreCase
   @Find
-  Person findWhereAgeLessThanOrEqualTo(@Field("age") @Lte int maxAgeInclusive);
+  Person findWhereAgeLessThanOrEqualTo(@Field("age") @LessThanOrEqualTo int maxAgeInclusive);
 
   // Return an Optional if you care about null safety
   @Find
@@ -203,7 +203,7 @@ interface PersonAccess {
   // Bookmark allows you to best-effort one-at-a-time loop through all the objects of a type while keeping your place persistent across threads and service restarts.
   @Bookmark
   Person getBookmark();
-  
+
   // Provide a bookmark id if you want multiple bookmarks at once.
   @Bookmark
   Person getBookmark(String bookmarkId);

@@ -40,12 +40,8 @@ import java.util.stream.StreamSupport;
 
 public class MongoPersistentStore implements PersistentStore {
 
-  private MongoClient mongoClient;
-  private Datastore datastore;
-
-  public MongoPersistentStore(Datastore datastore) {
-    this.datastore = datastore;
-  }
+  private final MongoClient mongoClient;
+  private final Datastore datastore;
 
   public MongoPersistentStore(MongoClient mongoClient, String databaseName) {
     this.mongoClient = mongoClient;
