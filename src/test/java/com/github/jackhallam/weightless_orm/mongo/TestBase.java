@@ -22,7 +22,9 @@ import java.util.function.Supplier;
 public class TestBase {
 
   public Supplier<Weightless> weightlessSupplier;
-  public Weightless weightless;
+  private Weightless weightless;
+  private static MongoServer mongoServer;
+  private static MongoClient mongoClient;
 
   public TestBase(Supplier<Weightless> weightlessSupplier) {
     this.weightlessSupplier = weightlessSupplier;
@@ -38,6 +40,12 @@ public class TestBase {
     if (weightless != null) {
       weightless.close();
     }
+    if (mongoServer != null) {
+      mongoServer.shutdownNow();
+    }
+    if (mongoClient != null) {
+      mongoClient.close();
+    }
   }
 
   public <T> T getDal(Class<T> clazz) {
@@ -52,9 +60,9 @@ public class TestBase {
       },
       {
         (Supplier<Weightless>) () -> {
-          MongoServer mongoServer = new MongoServer(new MemoryBackend());
+          mongoServer = new MongoServer(new MemoryBackend());
           InetSocketAddress serverAddress = mongoServer.bind();
-          MongoClient mongoClient = new MongoClient(new ServerAddress(serverAddress));
+          mongoClient = new MongoClient(new ServerAddress(serverAddress));
           return WeightlessORMBuilder.mongo().client(mongoClient).build();
         }
       }

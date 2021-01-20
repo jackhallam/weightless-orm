@@ -2,12 +2,21 @@ package com.github.jackhallam.weightless_orm.persistents;
 
 import com.github.jackhallam.weightless_orm.WeightlessORMException;
 import com.github.jackhallam.weightless_orm.annotations.Sort;
+import com.github.jackhallam.weightless_orm.annotations.field_filters.Contains;
+import com.github.jackhallam.weightless_orm.annotations.field_filters.ContainsIgnoreCase;
 import com.github.jackhallam.weightless_orm.annotations.field_filters.DoesNotExist;
+import com.github.jackhallam.weightless_orm.annotations.field_filters.EndsWith;
+import com.github.jackhallam.weightless_orm.annotations.field_filters.EndsWithIgnoreCase;
 import com.github.jackhallam.weightless_orm.annotations.field_filters.Equals;
 import com.github.jackhallam.weightless_orm.annotations.field_filters.Exists;
-import com.github.jackhallam.weightless_orm.annotations.field_filters.Gte;
+import com.github.jackhallam.weightless_orm.annotations.field_filters.GreaterThan;
+import com.github.jackhallam.weightless_orm.annotations.field_filters.GreaterThanOrEqualTo;
 import com.github.jackhallam.weightless_orm.annotations.field_filters.HasAnyOf;
-import com.github.jackhallam.weightless_orm.annotations.field_filters.Lte;
+import com.github.jackhallam.weightless_orm.annotations.field_filters.HasNoneOf;
+import com.github.jackhallam.weightless_orm.annotations.field_filters.LessThan;
+import com.github.jackhallam.weightless_orm.annotations.field_filters.LessThanOrEqualTo;
+import com.github.jackhallam.weightless_orm.annotations.field_filters.StartsWith;
+import com.github.jackhallam.weightless_orm.annotations.field_filters.StartsWithIgnoreCase;
 import com.github.jackhallam.weightless_orm.interceptors.handlers.ConditionHandler;
 import com.github.jackhallam.weightless_orm.interceptors.handlers.SortHandler;
 import com.mongodb.MongoClient;
@@ -31,12 +40,8 @@ import java.util.stream.StreamSupport;
 
 public class MongoPersistentStore implements PersistentStore {
 
-  private MongoClient mongoClient;
-  private Datastore datastore;
-
-  public MongoPersistentStore(Datastore datastore) {
-    this.datastore = datastore;
-  }
+  private final MongoClient mongoClient;
+  private final Datastore datastore;
 
   public MongoPersistentStore(MongoClient mongoClient, String databaseName) {
     this.mongoClient = mongoClient;
@@ -166,12 +171,21 @@ public class MongoPersistentStore implements PersistentStore {
 
   private Map<Class<? extends Annotation>, BiConsumer<FieldEnd<?>, Object>> getFiltersMap() {
     Map<Class<? extends Annotation>, BiConsumer<FieldEnd<?>, Object>> filtersMap = new HashMap<>();
-    filtersMap.put(Equals.class, (fieldEnd, fieldValue) -> fieldEnd.equal(fieldValue));
-    filtersMap.put(Lte.class, (fieldEnd, fieldValue) -> fieldEnd.lessThanOrEq(fieldValue));
-    filtersMap.put(Gte.class, (fieldEnd, fieldValue) -> fieldEnd.greaterThanOrEq(fieldValue));
-    filtersMap.put(HasAnyOf.class, (fieldEnd, fieldValue) -> fieldEnd.hasAnyOf((Iterable<?>) fieldValue));
-    filtersMap.put(Exists.class, (fieldEnd, fieldValue) -> fieldEnd.exists());
+    filtersMap.put(Contains.class, (fieldEnd, fieldValue) -> fieldEnd.contains((String)fieldValue));
+    filtersMap.put(ContainsIgnoreCase.class, (fieldEnd, fieldValue) -> fieldEnd.containsIgnoreCase((String)fieldValue));
     filtersMap.put(DoesNotExist.class, (fieldEnd, fieldValue) -> fieldEnd.doesNotExist());
+    filtersMap.put(EndsWith.class, (fieldEnd, fieldValue) -> fieldEnd.endsWith((String)fieldValue));
+    filtersMap.put(EndsWithIgnoreCase.class, (fieldEnd, fieldValue) -> fieldEnd.endsWithIgnoreCase((String)fieldValue));
+    filtersMap.put(Equals.class, (fieldEnd, fieldValue) -> fieldEnd.equal(fieldValue));
+    filtersMap.put(Exists.class, (fieldEnd, fieldValue) -> fieldEnd.exists());
+    filtersMap.put(GreaterThan.class, (fieldEnd, fieldValue) -> fieldEnd.greaterThan(fieldValue));
+    filtersMap.put(GreaterThanOrEqualTo.class, (fieldEnd, fieldValue) -> fieldEnd.greaterThanOrEq(fieldValue));
+    filtersMap.put(HasAnyOf.class, (fieldEnd, fieldValue) -> fieldEnd.hasAnyOf((Iterable<?>) fieldValue));
+    filtersMap.put(HasNoneOf.class, (fieldEnd, fieldValue) -> fieldEnd.hasNoneOf((Iterable<?>) fieldValue));
+    filtersMap.put(LessThan.class, (fieldEnd, fieldValue) -> fieldEnd.lessThan(fieldValue));
+    filtersMap.put(LessThanOrEqualTo.class, (fieldEnd, fieldValue) -> fieldEnd.lessThanOrEq(fieldValue));
+    filtersMap.put(StartsWith.class, (fieldEnd, fieldValue) -> fieldEnd.startsWith((String)fieldValue));
+    filtersMap.put(StartsWithIgnoreCase.class, (fieldEnd, fieldValue) -> fieldEnd.startsWithIgnoreCase((String)fieldValue));
     return filtersMap;
   }
 

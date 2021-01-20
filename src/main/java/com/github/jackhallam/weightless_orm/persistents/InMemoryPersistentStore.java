@@ -2,12 +2,21 @@ package com.github.jackhallam.weightless_orm.persistents;
 
 import com.github.jackhallam.weightless_orm.WeightlessORMException;
 import com.github.jackhallam.weightless_orm.annotations.Sort;
+import com.github.jackhallam.weightless_orm.annotations.field_filters.Contains;
+import com.github.jackhallam.weightless_orm.annotations.field_filters.ContainsIgnoreCase;
 import com.github.jackhallam.weightless_orm.annotations.field_filters.DoesNotExist;
+import com.github.jackhallam.weightless_orm.annotations.field_filters.EndsWith;
+import com.github.jackhallam.weightless_orm.annotations.field_filters.EndsWithIgnoreCase;
 import com.github.jackhallam.weightless_orm.annotations.field_filters.Equals;
 import com.github.jackhallam.weightless_orm.annotations.field_filters.Exists;
-import com.github.jackhallam.weightless_orm.annotations.field_filters.Gte;
+import com.github.jackhallam.weightless_orm.annotations.field_filters.GreaterThan;
+import com.github.jackhallam.weightless_orm.annotations.field_filters.GreaterThanOrEqualTo;
 import com.github.jackhallam.weightless_orm.annotations.field_filters.HasAnyOf;
-import com.github.jackhallam.weightless_orm.annotations.field_filters.Lte;
+import com.github.jackhallam.weightless_orm.annotations.field_filters.HasNoneOf;
+import com.github.jackhallam.weightless_orm.annotations.field_filters.LessThan;
+import com.github.jackhallam.weightless_orm.annotations.field_filters.LessThanOrEqualTo;
+import com.github.jackhallam.weightless_orm.annotations.field_filters.StartsWith;
+import com.github.jackhallam.weightless_orm.annotations.field_filters.StartsWithIgnoreCase;
 import com.github.jackhallam.weightless_orm.interceptors.handlers.ConditionHandler;
 import com.github.jackhallam.weightless_orm.interceptors.handlers.SortHandler;
 
@@ -142,9 +151,15 @@ public class InMemoryPersistentStore implements PersistentStore {
 
   private Map<Class<? extends Annotation>, BiFunction<Object, Object, Boolean>> getFiltersMap() {
     Map<Class<? extends Annotation>, BiFunction<Object, Object, Boolean>> filtersMap = new HashMap<>();
+    filtersMap.put(Contains.class, (testerObject, dbObject) -> ((String)dbObject).contains((String)testerObject));
+    filtersMap.put(ContainsIgnoreCase.class, (testerObject, dbObject) -> ((String)dbObject).toLowerCase().contains(((String)testerObject).toLowerCase()));
+    filtersMap.put(DoesNotExist.class, (testerObject, dbObject) -> dbObject == null);
+    filtersMap.put(EndsWith.class, (testerObject, dbObject) -> ((String)dbObject).endsWith((String)testerObject));
+    filtersMap.put(EndsWithIgnoreCase.class, (testerObject, dbObject) -> ((String)dbObject).toLowerCase().endsWith(((String)testerObject).toLowerCase()));
     filtersMap.put(Equals.class, (testerObject, dbObject) -> ((Comparable<Object>) testerObject).compareTo(dbObject) == 0);
-    filtersMap.put(Lte.class, (testerObject, dbObject) -> ((Comparable<Object>) testerObject).compareTo(dbObject) <= 0);
-    filtersMap.put(Gte.class, (testerObject, dbObject) -> ((Comparable<Object>) testerObject).compareTo(dbObject) >= 0);
+    filtersMap.put(Exists.class, (testerObject, dbObject) -> dbObject != null);
+    filtersMap.put(GreaterThan.class, (testerObject, dbObject) -> ((Comparable<Object>) dbObject).compareTo(testerObject) > 0);
+    filtersMap.put(GreaterThanOrEqualTo.class, (testerObject, dbObject) -> ((Comparable<Object>) dbObject).compareTo(testerObject) >= 0);
     filtersMap.put(HasAnyOf.class, (testerObject, dbObject) -> {
       for (Object o : ((Iterable<?>) testerObject)) {
         if (((Comparable<Object>) dbObject).compareTo(o) == 0) {
@@ -153,8 +168,18 @@ public class InMemoryPersistentStore implements PersistentStore {
       }
       return false;
     });
-    filtersMap.put(Exists.class, (testerObject, dbObject) -> dbObject != null);
-    filtersMap.put(DoesNotExist.class, (testerObject, dbObject) -> dbObject == null);
+    filtersMap.put(HasNoneOf.class, (testerObject, dbObject) -> {
+      for (Object o : ((Iterable<?>) testerObject)) {
+        if (((Comparable<Object>) dbObject).compareTo(o) == 0) {
+          return false;
+        }
+      }
+      return true;
+    });
+    filtersMap.put(LessThan.class, (testerObject, dbObject) -> ((Comparable<Object>) dbObject).compareTo(testerObject) < 0);
+    filtersMap.put(LessThanOrEqualTo.class, (testerObject, dbObject) -> ((Comparable<Object>) dbObject).compareTo(testerObject) <= 0);
+    filtersMap.put(StartsWith.class, (testerObject, dbObject) -> ((String)dbObject).startsWith((String)testerObject));
+    filtersMap.put(StartsWithIgnoreCase.class, (testerObject, dbObject) -> ((String)dbObject).toLowerCase().startsWith(((String)testerObject).toLowerCase()));
     return filtersMap;
   }
 
