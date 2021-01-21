@@ -24,6 +24,7 @@ import dev.morphia.Datastore;
 import dev.morphia.Morphia;
 import dev.morphia.query.FieldEnd;
 import dev.morphia.query.Query;
+import dev.morphia.query.ValidationException;
 import dev.morphia.query.internal.MorphiaCursor;
 
 import java.io.IOException;
@@ -59,8 +60,12 @@ public class MongoPersistentStore implements PersistentStore {
   public <T> Iterable<T> find(Class<T> clazz, ConditionHandler conditionHandler, SortHandler<T> sortHandler) {
     Query<T> query = datastore.find(clazz);
 
-    // Apply each conditional
-    conditionHandler.getSubFiltersIterator().forEachRemaining(subFilter -> getFiltersMap().get(subFilter.filterTypeAnnotation.annotationType()).accept(query.field(subFilter.fieldName), subFilter.value));
+    try {
+      // Apply each conditional
+      conditionHandler.getSubFiltersIterator().forEachRemaining(subFilter -> getFiltersMap().get(subFilter.filterTypeAnnotation.annotationType()).accept(query.field(subFilter.fieldName), subFilter.value));
+    } catch (ValidationException e) {
+      return Collections.emptyList();
+    }
 
     // Apply each sort
     sortHandler.getSortsIterator().forEachRemaining(sortContainer -> {
@@ -107,8 +112,12 @@ public class MongoPersistentStore implements PersistentStore {
   public <T> Iterable<T> delete(Class<T> clazz, ConditionHandler conditionHandler) {
     Query<T> query = datastore.find(clazz);
 
-    // Apply each conditional
-    conditionHandler.getSubFiltersIterator().forEachRemaining(subFilter -> getFiltersMap().get(subFilter.filterTypeAnnotation.annotationType()).accept(query.field(subFilter.fieldName), subFilter.value));
+    try {
+      // Apply each conditional
+      conditionHandler.getSubFiltersIterator().forEachRemaining(subFilter -> getFiltersMap().get(subFilter.filterTypeAnnotation.annotationType()).accept(query.field(subFilter.fieldName), subFilter.value));
+    } catch (ValidationException e) {
+      return Collections.emptyList();
+    }
 
     // Save a reference to each deleted object and delete each
     List<T> deleted = new ArrayList<>();
@@ -171,11 +180,11 @@ public class MongoPersistentStore implements PersistentStore {
 
   private Map<Class<? extends Annotation>, BiConsumer<FieldEnd<?>, Object>> getFiltersMap() {
     Map<Class<? extends Annotation>, BiConsumer<FieldEnd<?>, Object>> filtersMap = new HashMap<>();
-    filtersMap.put(Contains.class, (fieldEnd, fieldValue) -> fieldEnd.contains((String)fieldValue));
-    filtersMap.put(ContainsIgnoreCase.class, (fieldEnd, fieldValue) -> fieldEnd.containsIgnoreCase((String)fieldValue));
+    filtersMap.put(Contains.class, (fieldEnd, fieldValue) -> fieldEnd.contains((String) fieldValue));
+    filtersMap.put(ContainsIgnoreCase.class, (fieldEnd, fieldValue) -> fieldEnd.containsIgnoreCase((String) fieldValue));
     filtersMap.put(DoesNotExist.class, (fieldEnd, fieldValue) -> fieldEnd.doesNotExist());
-    filtersMap.put(EndsWith.class, (fieldEnd, fieldValue) -> fieldEnd.endsWith((String)fieldValue));
-    filtersMap.put(EndsWithIgnoreCase.class, (fieldEnd, fieldValue) -> fieldEnd.endsWithIgnoreCase((String)fieldValue));
+    filtersMap.put(EndsWith.class, (fieldEnd, fieldValue) -> fieldEnd.endsWith((String) fieldValue));
+    filtersMap.put(EndsWithIgnoreCase.class, (fieldEnd, fieldValue) -> fieldEnd.endsWithIgnoreCase((String) fieldValue));
     filtersMap.put(Equals.class, (fieldEnd, fieldValue) -> fieldEnd.equal(fieldValue));
     filtersMap.put(Exists.class, (fieldEnd, fieldValue) -> fieldEnd.exists());
     filtersMap.put(GreaterThan.class, (fieldEnd, fieldValue) -> fieldEnd.greaterThan(fieldValue));
@@ -184,8 +193,8 @@ public class MongoPersistentStore implements PersistentStore {
     filtersMap.put(HasNoneOf.class, (fieldEnd, fieldValue) -> fieldEnd.hasNoneOf((Iterable<?>) fieldValue));
     filtersMap.put(LessThan.class, (fieldEnd, fieldValue) -> fieldEnd.lessThan(fieldValue));
     filtersMap.put(LessThanOrEqualTo.class, (fieldEnd, fieldValue) -> fieldEnd.lessThanOrEq(fieldValue));
-    filtersMap.put(StartsWith.class, (fieldEnd, fieldValue) -> fieldEnd.startsWith((String)fieldValue));
-    filtersMap.put(StartsWithIgnoreCase.class, (fieldEnd, fieldValue) -> fieldEnd.startsWithIgnoreCase((String)fieldValue));
+    filtersMap.put(StartsWith.class, (fieldEnd, fieldValue) -> fieldEnd.startsWith((String) fieldValue));
+    filtersMap.put(StartsWithIgnoreCase.class, (fieldEnd, fieldValue) -> fieldEnd.startsWithIgnoreCase((String) fieldValue));
     return filtersMap;
   }
 

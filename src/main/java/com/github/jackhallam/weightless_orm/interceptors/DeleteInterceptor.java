@@ -43,7 +43,6 @@ public class DeleteInterceptor {
     return deleteReturnHandler.pick((Class<Object>) method.getReturnType()).apply(deletedObjectsIterable);
   }
 
-
   public class DeleteReturnHandler<T> extends ReturnHandler<T> {
 
     @Override
