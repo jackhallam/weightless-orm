@@ -1,11 +1,13 @@
 package com.github.jackhallam.weightless_orm.mongo;
 
 import com.github.jackhallam.weightless_orm.Weightless;
+import com.github.jackhallam.weightless_orm.WeightlessORMException;
 import com.github.jackhallam.weightless_orm.annotations.Create;
 import com.github.jackhallam.weightless_orm.annotations.Field;
 import com.github.jackhallam.weightless_orm.annotations.FindOrCreate;
 import com.github.jackhallam.weightless_orm.annotations.Sort;
 import com.github.jackhallam.weightless_orm.annotations.field_filters.Equals;
+import com.github.jackhallam.weightless_orm.annotations.field_filters.GreaterThan;
 import org.junit.Test;
 
 import java.util.List;
@@ -13,6 +15,7 @@ import java.util.Optional;
 import java.util.function.Supplier;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 
 public class TestFindOrCreate extends TestBase {
@@ -39,11 +42,19 @@ public class TestFindOrCreate extends TestBase {
   }
 
   @Test
-  public void testFindOrCreateOptionalSuccess() throws Exception {
-    Optional<TestObject> testObjectOptional = getDal(Dal.class).findOrCreateOptional("the field value");
+  public void testFindOrCreateReturnOptionalSuccess() throws Exception {
+    Optional<TestObject> testObjectOptional = getDal(Dal.class).findOrCreateReturnOptional("the field value");
 
     assertTrue(testObjectOptional.isPresent());
     assertEquals("the field value", testObjectOptional.get().testField);
+  }
+
+  @Test
+  public void testFindOrCreateReturnIterableSuccess() throws Exception {
+    Iterable<TestObject> iterable = getDal(Dal.class).findOrCreateReturnIterable("the field value");
+
+    assertTrue(iterable.iterator().hasNext());
+    assertEquals("the field value", iterable.iterator().next().testField);
   }
 
   @Test
@@ -78,6 +89,26 @@ public class TestFindOrCreate extends TestBase {
     assertEquals(firstTestObject.otherTestField, objects.get(1).otherTestField);
   }
 
+  @Test
+  public void testFindOrCreateFilterNotEqualsFailure() throws Exception {
+    assertThrows(WeightlessORMException.class, () -> getDal(Dal.class).failureFindOrCreateNotEqualsFilter(2));
+  }
+
+  @Test
+  public void testFindOrCreateReturnListOfListsFailure() throws Exception {
+    assertThrows(WeightlessORMException.class, () -> getDal(Dal.class).failureFindOrCreateReturnListOfLists("hello"));
+  }
+
+  @Test
+  public void testFindOrCreateReturnVoidFailure() throws Exception {
+    assertThrows(WeightlessORMException.class, () -> getDal(Dal.class).failureFindOrCreateReturnVoid("hello"));
+  }
+
+  @Test
+  public void testFindOrCreateReturnBooleanFailure() throws Exception {
+    assertThrows(WeightlessORMException.class, () -> getDal(Dal.class).failureFindOrCreateReturnBoolean("hello"));
+  }
+
   public static class TestObject {
     public String testField;
     public int otherTestField;
@@ -88,7 +119,22 @@ public class TestFindOrCreate extends TestBase {
     TestObject findOrCreate(@Field("testField") @Equals String testField);
 
     @FindOrCreate
-    Optional<TestObject> findOrCreateOptional(@Field("testField") @Equals String testField);
+    TestObject failureFindOrCreateNotEqualsFilter(@Field("otherTestField") @GreaterThan int val);
+
+    @FindOrCreate
+    List<List<TestObject>> failureFindOrCreateReturnListOfLists(@Field("testField") @Equals String testField);
+
+    @FindOrCreate
+    void failureFindOrCreateReturnVoid(@Field("testField") @Equals String testField);
+
+    @FindOrCreate
+    boolean failureFindOrCreateReturnBoolean(@Field("testField") @Equals String testField);
+
+    @FindOrCreate
+    Optional<TestObject> findOrCreateReturnOptional(@Field("testField") @Equals String testField);
+
+    @FindOrCreate
+    Iterable<TestObject> findOrCreateReturnIterable(@Field("testField") @Equals String testField);
 
     @FindOrCreate
     List<TestObject> findOrCreateReturnAll(@Field("testField") @Equals String testField);

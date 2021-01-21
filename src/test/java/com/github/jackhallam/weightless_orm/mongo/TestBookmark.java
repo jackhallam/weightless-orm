@@ -9,6 +9,7 @@ import com.github.jackhallam.weightless_orm.annotations.Field;
 import com.github.jackhallam.weightless_orm.annotations.field_filters.Equals;
 import org.junit.Test;
 
+import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Supplier;
@@ -62,15 +63,29 @@ public class TestBookmark extends TestBase {
   }
 
   @Test
-  public void testBookmarkIterableListSuccess() throws Exception {
-    assertTrue(getDal(Dal.class).getBookmarkAsIterableList().isEmpty());
+  public void testBookmarkReturnListSuccess() throws Exception {
+    assertTrue(getDal(Dal.class).getBookmarkAsList().isEmpty());
 
     TestObject testObject = new TestObject();
     testObject.testField = 1;
     getDal(Dal.class).create(testObject);
 
-    List<TestObject> found = getDal(Dal.class).getBookmarkAsIterableList();
+    List<TestObject> found = getDal(Dal.class).getBookmarkAsList();
     assertEquals(1, found.get(0).testField);
+  }
+
+  @Test
+  public void testBookmarkReturnIterableSuccess() throws Exception {
+    Iterator<TestObject> iterator = getDal(Dal.class).getBookmarkAsIterable().iterator();
+    assertFalse(iterator.hasNext());
+
+    TestObject testObject = new TestObject();
+    testObject.testField = 1;
+    getDal(Dal.class).create(testObject);
+
+    iterator = getDal(Dal.class).getBookmarkAsIterable().iterator();
+    assertTrue(iterator.hasNext());
+    assertEquals(1, iterator.next().testField);
   }
 
   @Test
@@ -97,16 +112,17 @@ public class TestBookmark extends TestBase {
       getDal(Dal.class).create(testObject);
     }
 
-    for (int i = 0; i < 5; i++) {
-      if (i == 4) {
+    getDal(Dal.class).getBookmark();
+    getDal(Dal.class).getBookmark();
+    getDal(Dal.class).getBookmark();
+
+
+    for (int i = 0; i < 4; i++) {
         getDal(Dal.class).deleteByTestField(i);
-      } else {
-        getDal(Dal.class).getBookmark();
-      }
     }
 
     TestObject testObject = getDal(Dal.class).getBookmark();
-    assertEquals(0, testObject.testField);
+    assertEquals(4, testObject.testField);
   }
 
   @Test
@@ -127,6 +143,11 @@ public class TestBookmark extends TestBase {
   @Test
   public void testBookmarkBooleanReturnFailure() throws Exception {
     assertThrows(WeightlessORMException.class, () -> getDal(Dal.class).failBookmarkBooleanReturn());
+  }
+
+  @Test
+  public void testBookmarkReturnListOfListFailure() throws Exception {
+    assertThrows(WeightlessORMException.class, () -> getDal(Dal.class).failBookmarkListOfListReturn());
   }
 
   public static class TestObject {
@@ -153,6 +174,9 @@ public class TestBookmark extends TestBase {
     boolean failBookmarkBooleanReturn();
 
     @Bookmark
+    List<List<TestObject>> failBookmarkListOfListReturn();
+
+    @Bookmark
     TestObject getBookmarkFromBookmarkId(String bookmarkId);
 
     @Bookmark
@@ -162,6 +186,9 @@ public class TestBookmark extends TestBase {
     Optional<TestObject> getBookmarkAsOptional();
 
     @Bookmark
-    List<TestObject> getBookmarkAsIterableList();
+    List<TestObject> getBookmarkAsList();
+
+    @Bookmark
+    Iterable<TestObject> getBookmarkAsIterable();
   }
 }

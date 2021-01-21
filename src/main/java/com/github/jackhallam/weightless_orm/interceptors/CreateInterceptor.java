@@ -40,7 +40,7 @@ public class CreateInterceptor {
    */
   private <T> Iterable<T> getObjectsToCreate(java.lang.reflect.Parameter[] parameters, Object[] allArguments) {
     // A single parameter extending iterable
-    if (parameters[0].getParameterizedType() instanceof Iterable) {
+    if (Iterable.class.isAssignableFrom(parameters[0].getType())) {
       return (Iterable<T>) allArguments[0];
     }
     // A single parameter not extending iterable
