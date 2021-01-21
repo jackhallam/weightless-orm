@@ -1,6 +1,5 @@
 package com.github.jackhallam.weightless_orm.mongo;
 
-
 import com.github.jackhallam.weightless_orm.Weightless;
 import com.github.jackhallam.weightless_orm.annotations.Create;
 import com.github.jackhallam.weightless_orm.annotations.Field;
@@ -15,9 +14,8 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
-public class TestFindAndCreate extends TestBase {
-
-  public TestFindAndCreate(Supplier<Weightless> weightlessSupplier) {
+public class TestFind extends TestBase {
+  public TestFind(Supplier<Weightless> weightlessSupplier) {
     super(weightlessSupplier);
   }
 
@@ -33,16 +31,6 @@ public class TestFindAndCreate extends TestBase {
     List<TestObject> testObjects = getDal(Dal.class).findAll();
 
     assertTrue(testObjects.isEmpty());
-  }
-
-  @Test
-  public void testCreateOneFindOneSuccess() throws Exception {
-    TestObject testObject = new TestObject();
-    testObject.testField = "hello";
-    TestObject savedTestObject = getDal(Dal.class).create(testObject);
-    TestObject foundTestObject = getDal(Dal.class).find("hello");
-
-    assertEquals(savedTestObject.testField, foundTestObject.testField);
   }
 
   @Test

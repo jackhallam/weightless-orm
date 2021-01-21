@@ -1,7 +1,5 @@
 package com.github.jackhallam.weightless_orm.interceptors.handlers;
 
-import com.github.jackhallam.weightless_orm.WeightlessORMException;
-
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.Arrays;
@@ -63,11 +61,7 @@ public abstract class ReturnHandler<T> {
     if (clazz.equals(void.class) || clazz.equals(Void.class)) {
       return tIterable -> {
         handleVoid(tIterable);
-        try {
-          return Void.TYPE.newInstance();
-        } catch (InstantiationException | IllegalAccessException e) {
-          throw new WeightlessORMException(e);
-        }
+        return new Object();
       };
     }
 
