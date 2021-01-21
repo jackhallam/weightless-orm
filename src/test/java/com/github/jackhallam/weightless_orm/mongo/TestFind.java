@@ -6,12 +6,15 @@ import com.github.jackhallam.weightless_orm.annotations.Create;
 import com.github.jackhallam.weightless_orm.annotations.Field;
 import com.github.jackhallam.weightless_orm.annotations.Find;
 import com.github.jackhallam.weightless_orm.annotations.field_filters.Equals;
+import com.github.jackhallam.weightless_orm.annotations.field_filters.LessThan;
 import org.junit.Test;
 
 import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -65,6 +68,16 @@ public class TestFind extends TestBase {
   }
 
   @Test
+  public void testFindTwoFiltersTogetherFailure() throws Exception {
+    assertThrows(WeightlessORMException.class, () -> getDal(Dal.class).failureFindTwoFiltersTogether("somestring"));
+  }
+
+  @Test
+  public void testFindFieldNotFirstFailure() throws Exception {
+    assertThrows(WeightlessORMException.class, () -> getDal(Dal.class).failureFindFieldNotFirst("somestring"));
+  }
+
+  @Test
   public void testFindReturnIterableSuccess() throws Exception {
     TestObject testObject = new TestObject();
     testObject.testField = "hello";
@@ -94,6 +107,29 @@ public class TestFind extends TestBase {
     assertFalse(testObjectOptional.isPresent());
   }
 
+  @Test
+  public void testFindReturnStreamSuccess() throws Exception {
+    TestObject testObject = new TestObject();
+    testObject.testField = "hello";
+    testObject = getDal(Dal.class).create(testObject);
+    Stream<TestObject> testObjectStream = getDal(Dal.class).findReturnStream("hello");
+
+    List<TestObject> testObjects = testObjectStream.collect(Collectors.toList());
+    assertEquals(1, testObjects.size());
+    assertEquals(testObject.testField, testObjects.get(0).testField);
+  }
+
+  @Test
+  public void testFindReturnIteratorSuccess() throws Exception {
+    TestObject testObject = new TestObject();
+    testObject.testField = "hello";
+    testObject = getDal(Dal.class).create(testObject);
+    Iterator<TestObject> iterator = getDal(Dal.class).findReturnIterator("hello");
+
+    assertTrue(iterator.hasNext());
+    assertEquals(testObject.testField, iterator.next().testField);
+  }
+
   public static class TestObject {
     public String testField;
   }
@@ -109,7 +145,19 @@ public class TestFind extends TestBase {
     Optional<TestObject> findReturnOptional(@Field("testField") @Equals String testField);
 
     @Find
+    Stream<TestObject> findReturnStream(@Field("testField") @Equals String testField);
+
+    @Find
+    Iterator<TestObject> findReturnIterator(@Field("testField") @Equals String testField);
+
+    @Find
     List<List<TestObject>> failureFindReturnListOfLists(@Field("testField") @Equals String testField);
+
+    @Find
+    TestObject failureFindTwoFiltersTogether(@Field("testField") @Equals @LessThan String testField);
+
+    @Find
+    TestObject failureFindFieldNotFirst(@Equals @Field("testField") String testField);
 
     @Find
     void failureFindReturnVoid(@Field("testField") @Equals String testField);

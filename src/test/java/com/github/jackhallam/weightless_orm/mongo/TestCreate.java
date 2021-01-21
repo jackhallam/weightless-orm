@@ -72,6 +72,13 @@ public class TestCreate extends TestBase {
   }
 
   @Test
+  public void testCreateReturnObjectBooleanSuccess() throws Exception {
+    TestObject testObject = new TestObject();
+    testObject.testField = "hello";
+    assertTrue(getDal(Dal.class).createReturnObjectBoolean(testObject));
+  }
+
+  @Test
   public void testCreateReturnIterableSuccess() throws Exception {
     TestObject testObject = new TestObject();
     testObject.testField = "hello";
@@ -118,6 +125,9 @@ public class TestCreate extends TestBase {
 
     @Create
     boolean createReturnBoolean(TestObject testObject);
+
+    @Create
+    Boolean createReturnObjectBoolean(TestObject testObject);
 
     @Create
     Optional<TestObject> createAllReturnOptional(List<TestObject> testObjects);
