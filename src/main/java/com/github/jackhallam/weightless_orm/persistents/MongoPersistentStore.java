@@ -103,7 +103,11 @@ public class MongoPersistentStore implements PersistentStore {
 
     Class<T> clazz = (Class<T>) t.getClass();
 
-    this.delete(clazz, conditionHandler); // We don't check output because we don't really care how many we delete
+    Iterable<T> deletedIterable = this.delete(clazz, conditionHandler);
+    Iterator<T> deletedIterator = deletedIterable.iterator();
+    if (!deletedIterator.hasNext()) {
+      return Collections.emptyList(); // We did not find an item to update
+    }
 
     return save(Collections.singletonList(t)); // Convert that single object back to iterable and save it
   }

@@ -14,6 +14,7 @@ import java.util.function.Supplier;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 
@@ -22,7 +23,6 @@ public class TestCreate extends TestBase {
   public TestCreate(Supplier<Weightless> weightlessSupplier) {
     super(weightlessSupplier);
   }
-
 
   @Test
   public void testCreateOneSuccess() throws Exception {
@@ -54,6 +54,12 @@ public class TestCreate extends TestBase {
   }
 
   @Test
+  public void testCreateNoneSuccess() throws Exception {
+    TestObject testObject = getDal(Dal.class).create(Collections.emptyList());
+    assertNull(testObject);
+  }
+
+  @Test
   public void testCreateNoneReturnVoidFailure() throws Exception {
     assertThrows(WeightlessORMException.class, () -> getDal(Dal.class).createAllReturnVoid(Collections.emptyList()));
   }
@@ -63,6 +69,14 @@ public class TestCreate extends TestBase {
     TestObject testObject = new TestObject();
     testObject.testField = "hello";
     assertTrue(getDal(Dal.class).createReturnBoolean(testObject));
+  }
+
+  @Test
+  public void testCreateReturnIterableSuccess() throws Exception {
+    TestObject testObject = new TestObject();
+    testObject.testField = "hello";
+    assertTrue(getDal(Dal.class).createReturnIterable(testObject).iterator().hasNext());
+    assertEquals(testObject.testField, getDal(Dal.class).createReturnIterable(testObject).iterator().next().testField);
   }
 
   @Test
@@ -89,6 +103,12 @@ public class TestCreate extends TestBase {
   public interface Dal {
     @Create
     TestObject create(TestObject testObject);
+
+    @Create
+    TestObject create(List<TestObject> testObject);
+
+    @Create
+    Iterable<TestObject> createReturnIterable(TestObject testObject);
 
     @Create
     List<TestObject> createAll(List<TestObject> testObjects);
