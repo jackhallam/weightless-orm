@@ -9,9 +9,11 @@ import org.junit.Test;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.function.Supplier;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 
@@ -45,22 +47,39 @@ public class TestCreate extends TestBase {
   }
 
   @Test
-  public void testCreateAllVoidSuccess() throws Exception {
+  public void testCreateReturnVoidSuccess() throws Exception {
     TestObject testObject = new TestObject();
     testObject.testField = "hello";
     getDal(Dal.class).createAllReturnVoid(Collections.singletonList(testObject));
   }
 
   @Test
-  public void testCreateNoneErrorVoidFailure() throws Exception {
+  public void testCreateNoneReturnVoidFailure() throws Exception {
     assertThrows(WeightlessORMException.class, () -> getDal(Dal.class).createAllReturnVoid(Collections.emptyList()));
   }
 
   @Test
-  public void testCreateBooleanSuccess() throws Exception {
+  public void testCreateReturnBooleanSuccess() throws Exception {
     TestObject testObject = new TestObject();
     testObject.testField = "hello";
     assertTrue(getDal(Dal.class).createReturnBoolean(testObject));
+  }
+
+  @Test
+  public void testCreateReturnOptionalSuccess() throws Exception {
+    TestObject testObject = new TestObject();
+    testObject.testField = "hello";
+    assertTrue(getDal(Dal.class).createAllReturnOptional(Collections.singletonList(testObject)).isPresent());
+  }
+
+  @Test
+  public void testCreateReturnOptionalEmptySuccess() throws Exception {
+    assertFalse(getDal(Dal.class).createAllReturnOptional(Collections.emptyList()).isPresent());
+  }
+
+  @Test
+  public void testCreateReturnListEmptySuccess() throws Exception {
+    assertTrue(getDal(Dal.class).createAll(Collections.emptyList()).isEmpty());
   }
 
   public static class TestObject {
@@ -79,5 +98,8 @@ public class TestCreate extends TestBase {
 
     @Create
     boolean createReturnBoolean(TestObject testObject);
+
+    @Create
+    Optional<TestObject> createAllReturnOptional(List<TestObject> testObjects);
   }
 }
