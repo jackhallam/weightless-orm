@@ -1,6 +1,6 @@
 package com.github.jackhallam.weightless_orm.interceptors;
 
-import com.github.jackhallam.weightless_orm.WeightlessORMException;
+import com.github.jackhallam.weightless_orm.WeightlessException;
 import com.github.jackhallam.weightless_orm.interceptors.handlers.ReturnHandler;
 import com.github.jackhallam.weightless_orm.persistents.PersistentStore;
 import net.bytebuddy.implementation.bind.annotation.AllArguments;
@@ -55,7 +55,7 @@ public class CreateInterceptor {
     @Override
     public void handleVoid(Iterable<T> tIterable) {
       if (!tIterable.iterator().hasNext()) {
-        throw new WeightlessORMException("Error in Create");
+        throw new WeightlessException("Error in Create");
       }
     }
 

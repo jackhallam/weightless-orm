@@ -1,7 +1,7 @@
 package com.github.jackhallam.weightless_orm.interceptors;
 
 import com.github.jackhallam.weightless_orm.Weightless;
-import com.github.jackhallam.weightless_orm.WeightlessORMException;
+import com.github.jackhallam.weightless_orm.WeightlessException;
 import com.github.jackhallam.weightless_orm.annotations.Field;
 import com.github.jackhallam.weightless_orm.annotations.FindOrCreate;
 import com.github.jackhallam.weightless_orm.annotations.Update;
@@ -44,7 +44,7 @@ public class BookmarkInterceptor {
     try {
       clazz = (Class<T>) Class.forName(bookmarkReturnHandler.inferInnerTypeIfPresent((method.getGenericReturnType())).getTypeName());
     } catch (ClassNotFoundException e) {
-      throw new WeightlessORMException(e);
+      throw new WeightlessException(e);
     }
 
     String bookmarkId = getBookmarkId(method.getParameters(), allArguments);
@@ -93,12 +93,12 @@ public class BookmarkInterceptor {
   private String getBookmarkId(Parameter[] parameters, Object[] allArguments) {
     String bookmarkId = DEFAULT_BOOKMARK_ID;
     if (parameters.length > 1) {
-      throw new WeightlessORMException("Bookmark expects 0 or 1 parameter");
+      throw new WeightlessException("Bookmark expects 0 or 1 parameter");
     }
     if (parameters.length == 1) {
       Parameter parameter = parameters[0];
       if (!parameter.getType().equals(String.class)) {
-        throw new WeightlessORMException("Bookmark with one parameter expects a String bookmark id");
+        throw new WeightlessException("Bookmark with one parameter expects a String bookmark id");
       }
       bookmarkId = (String) allArguments[0];
     }
@@ -122,12 +122,12 @@ public class BookmarkInterceptor {
 
     @Override
     public void handleVoid(Iterable<T> tIterable) {
-      throw new WeightlessORMException("Void not acceptable return type for bookmark");
+      throw new WeightlessException("Void not acceptable return type for bookmark");
     }
 
     @Override
     public boolean handleBoolean(Iterable<T> tIterable) {
-      throw new WeightlessORMException("Void not acceptable return type for bookmark");
+      throw new WeightlessException("Void not acceptable return type for bookmark");
     }
 
     @Override

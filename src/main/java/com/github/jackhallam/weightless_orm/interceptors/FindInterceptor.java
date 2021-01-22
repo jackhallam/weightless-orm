@@ -1,6 +1,6 @@
 package com.github.jackhallam.weightless_orm.interceptors;
 
-import com.github.jackhallam.weightless_orm.WeightlessORMException;
+import com.github.jackhallam.weightless_orm.WeightlessException;
 import com.github.jackhallam.weightless_orm.interceptors.handlers.ConditionHandler;
 import com.github.jackhallam.weightless_orm.interceptors.handlers.ReturnHandler;
 import com.github.jackhallam.weightless_orm.interceptors.handlers.SortHandler;
@@ -35,7 +35,7 @@ public class FindInterceptor {
     try {
       clazz = (Class<T>) Class.forName(findReturnHandler.inferInnerTypeIfPresent((method.getGenericReturnType())).getTypeName());
     } catch (ClassNotFoundException e) {
-      throw new WeightlessORMException(e);
+      throw new WeightlessException(e);
     }
 
     // Get the iterator from the persistentStore
@@ -52,7 +52,7 @@ public class FindInterceptor {
      */
     @Override
     public void handleVoid(Iterable<T> tIterable) {
-      throw new WeightlessORMException("Void cannot be the return type of Find");
+      throw new WeightlessException("Void cannot be the return type of Find");
     }
 
     /**
@@ -60,7 +60,7 @@ public class FindInterceptor {
      */
     @Override
     public boolean handleBoolean(Iterable<T> tIterable) {
-      throw new WeightlessORMException("Boolean cannot be the return type of Find");
+      throw new WeightlessException("Boolean cannot be the return type of Find");
     }
 
     @Override

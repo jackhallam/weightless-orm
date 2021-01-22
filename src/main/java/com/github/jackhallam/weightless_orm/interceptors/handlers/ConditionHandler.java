@@ -1,6 +1,6 @@
 package com.github.jackhallam.weightless_orm.interceptors.handlers;
 
-import com.github.jackhallam.weightless_orm.WeightlessORMException;
+import com.github.jackhallam.weightless_orm.WeightlessException;
 import com.github.jackhallam.weightless_orm.annotations.Field;
 
 import java.lang.annotation.Annotation;
@@ -33,10 +33,10 @@ public class ConditionHandler {
         continue; // Skip if there are not any annotations (such as the @Update case)
       }
       if (annotations.length != 2) {
-        throw new WeightlessORMException("Expected 2 annotations on the parameter but found " + annotations.length);
+        throw new WeightlessException("Expected 2 annotations on the parameter but found " + annotations.length);
       }
       if (!annotations[0].annotationType().equals(Field.class)) {
-        throw new WeightlessORMException("Expected " + Field.class + " as the first annotation on the parameter but found " + annotations[0].annotationType());
+        throw new WeightlessException("Expected " + Field.class + " as the first annotation on the parameter but found " + annotations[0].annotationType());
       }
 
       String fieldName = ((Field) annotations[0]).value();

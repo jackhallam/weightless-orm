@@ -1,7 +1,5 @@
-package com.github.jackhallam.weightless_orm.mongo;
+package com.github.jackhallam.weightless_orm;
 
-import com.github.jackhallam.weightless_orm.Weightless;
-import com.github.jackhallam.weightless_orm.WeightlessORMException;
 import com.github.jackhallam.weightless_orm.annotations.Bookmark;
 import com.github.jackhallam.weightless_orm.annotations.Create;
 import com.github.jackhallam.weightless_orm.annotations.Delete;
@@ -127,27 +125,27 @@ public class TestBookmark extends TestBase {
 
   @Test
   public void testBookmarkTooManyArgumentsFailure() throws Exception {
-    assertThrows(WeightlessORMException.class, () -> getDal(Dal.class).failBookmarkTooManyArguments("foo", "bar"));
+    assertThrows(WeightlessException.class, () -> getDal(Dal.class).failBookmarkTooManyArguments("foo", "bar"));
   }
 
   @Test
   public void testBookmarkArgumentNotStringFailure() throws Exception {
-    assertThrows(WeightlessORMException.class, () -> getDal(Dal.class).failBookmarkArgumentNotString(1));
+    assertThrows(WeightlessException.class, () -> getDal(Dal.class).failBookmarkArgumentNotString(1));
   }
 
   @Test
   public void testBookmarkVoidReturnFailure() throws Exception {
-    assertThrows(WeightlessORMException.class, () -> getDal(Dal.class).failBookmarkVoidReturn());
+    assertThrows(WeightlessException.class, () -> getDal(Dal.class).failBookmarkVoidReturn());
   }
 
   @Test
   public void testBookmarkBooleanReturnFailure() throws Exception {
-    assertThrows(WeightlessORMException.class, () -> getDal(Dal.class).failBookmarkBooleanReturn());
+    assertThrows(WeightlessException.class, () -> getDal(Dal.class).failBookmarkBooleanReturn());
   }
 
   @Test
   public void testBookmarkReturnListOfListFailure() throws Exception {
-    assertThrows(WeightlessORMException.class, () -> getDal(Dal.class).failBookmarkListOfListReturn());
+    assertThrows(WeightlessException.class, () -> getDal(Dal.class).failBookmarkListOfListReturn());
   }
 
   public static class TestObject {

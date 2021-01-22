@@ -1,7 +1,5 @@
-package com.github.jackhallam.weightless_orm.mongo;
+package com.github.jackhallam.weightless_orm;
 
-import com.github.jackhallam.weightless_orm.Weightless;
-import com.github.jackhallam.weightless_orm.WeightlessORMException;
 import com.github.jackhallam.weightless_orm.annotations.Create;
 import com.github.jackhallam.weightless_orm.annotations.Delete;
 import com.github.jackhallam.weightless_orm.annotations.Field;
@@ -94,17 +92,17 @@ public class TestDelete extends TestBase {
 
   @Test
   public void testDeleteReturnListOfListFailure() throws Exception {
-    assertThrows(WeightlessORMException.class, () -> getDal(Dal.class).failureDeleteReturnListOfList("hello"));
+    assertThrows(WeightlessException.class, () -> getDal(Dal.class).failureDeleteReturnListOfList("hello"));
   }
 
   @Test
   public void testDeleteReturnVoidFailure() throws Exception {
-    assertThrows(WeightlessORMException.class, () -> getDal(Dal.class).failureDeleteReturnVoid("hello"));
+    assertThrows(WeightlessException.class, () -> getDal(Dal.class).failureDeleteReturnVoid("hello"));
   }
 
   @Test
   public void testDeleteReturnBooleanFailure() throws Exception {
-    assertThrows(WeightlessORMException.class, () -> getDal(Dal.class).failureDeleteReturnBoolean("hello"));
+    assertThrows(WeightlessException.class, () -> getDal(Dal.class).failureDeleteReturnBoolean("hello"));
   }
 
   @Test

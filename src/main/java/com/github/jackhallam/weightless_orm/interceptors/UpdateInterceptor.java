@@ -1,6 +1,6 @@
 package com.github.jackhallam.weightless_orm.interceptors;
 
-import com.github.jackhallam.weightless_orm.WeightlessORMException;
+import com.github.jackhallam.weightless_orm.WeightlessException;
 import com.github.jackhallam.weightless_orm.interceptors.handlers.ConditionHandler;
 import com.github.jackhallam.weightless_orm.interceptors.handlers.ReturnHandler;
 import com.github.jackhallam.weightless_orm.persistents.PersistentStore;
@@ -58,7 +58,7 @@ public class UpdateInterceptor {
     @Override
     public void handleVoid(Iterable<T> tIterable) {
       if (!tIterable.iterator().hasNext()) {
-        throw new WeightlessORMException("Error in Update");
+        throw new WeightlessException("Error in Update");
       }
     }
 

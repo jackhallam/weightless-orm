@@ -1,6 +1,6 @@
 package com.github.jackhallam.weightless_orm.interceptors;
 
-import com.github.jackhallam.weightless_orm.WeightlessORMException;
+import com.github.jackhallam.weightless_orm.WeightlessException;
 import com.github.jackhallam.weightless_orm.interceptors.handlers.ConditionHandler;
 import com.github.jackhallam.weightless_orm.interceptors.handlers.ReturnHandler;
 import com.github.jackhallam.weightless_orm.persistents.PersistentStore;
@@ -33,7 +33,7 @@ public class DeleteInterceptor {
     try {
       clazz = (Class<T>) Class.forName(deleteReturnHandler.inferInnerTypeIfPresent((method.getGenericReturnType())).getTypeName());
     } catch (ClassNotFoundException e) {
-      throw new WeightlessORMException(e);
+      throw new WeightlessException(e);
     }
 
     // Get the iterator from the persistentStore
@@ -47,7 +47,7 @@ public class DeleteInterceptor {
 
     @Override
     public void handleVoid(Iterable<T> tIterable) {
-      throw new WeightlessORMException("Delete requires an object type to be returned");
+      throw new WeightlessException("Delete requires an object type to be returned");
     }
 
     /**
@@ -55,7 +55,7 @@ public class DeleteInterceptor {
      */
     @Override
     public boolean handleBoolean(Iterable<T> tIterable) {
-      throw new WeightlessORMException("Delete requires an object type to be returned");
+      throw new WeightlessException("Delete requires an object type to be returned");
     }
 
     @Override

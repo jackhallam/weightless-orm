@@ -1,7 +1,5 @@
-package com.github.jackhallam.weightless_orm.mongo;
+package com.github.jackhallam.weightless_orm;
 
-import com.github.jackhallam.weightless_orm.Weightless;
-import com.github.jackhallam.weightless_orm.WeightlessORMBuilder;
 import com.mongodb.MongoClient;
 import com.mongodb.ServerAddress;
 import de.bwaldvogel.mongo.MongoServer;
@@ -56,14 +54,14 @@ public class TestBase {
   public static Collection<Supplier[]> data() {
     Supplier[][] data = {
       {
-        (Supplier<Weightless>) () -> WeightlessORMBuilder.inMemory().build()
+        (Supplier<Weightless>) () -> Weightless.inMemory().build()
       },
       {
         (Supplier<Weightless>) () -> {
           mongoServer = new MongoServer(new MemoryBackend());
           InetSocketAddress serverAddress = mongoServer.bind();
           mongoClient = new MongoClient(new ServerAddress(serverAddress));
-          return WeightlessORMBuilder.mongo().client(mongoClient).build();
+          return Weightless.mongo().client(mongoClient).build();
         }
       }
     };

@@ -1,8 +1,6 @@
-package com.github.jackhallam.weightless_orm.mongo;
+package com.github.jackhallam.weightless_orm;
 
 
-import com.github.jackhallam.weightless_orm.Weightless;
-import com.github.jackhallam.weightless_orm.WeightlessORMException;
 import com.github.jackhallam.weightless_orm.annotations.Create;
 import org.junit.Test;
 
@@ -61,7 +59,7 @@ public class TestCreate extends TestBase {
 
   @Test
   public void testCreateNoneReturnVoidFailure() throws Exception {
-    assertThrows(WeightlessORMException.class, () -> getDal(Dal.class).createAllReturnVoid(Collections.emptyList()));
+    assertThrows(WeightlessException.class, () -> getDal(Dal.class).createAllReturnVoid(Collections.emptyList()));
   }
 
   @Test

@@ -1,7 +1,5 @@
-package com.github.jackhallam.weightless_orm.mongo;
+package com.github.jackhallam.weightless_orm;
 
-import com.github.jackhallam.weightless_orm.Weightless;
-import com.github.jackhallam.weightless_orm.WeightlessORMException;
 import com.github.jackhallam.weightless_orm.annotations.Create;
 import com.github.jackhallam.weightless_orm.annotations.Field;
 import com.github.jackhallam.weightless_orm.annotations.Find;
@@ -54,27 +52,27 @@ public class TestFind extends TestBase {
 
   @Test
   public void testFindReturnListOfListsFailure() throws Exception {
-    assertThrows(WeightlessORMException.class, () -> getDal(Dal.class).failureFindReturnListOfLists("somestring"));
+    assertThrows(WeightlessException.class, () -> getDal(Dal.class).failureFindReturnListOfLists("somestring"));
   }
 
   @Test
   public void testFindReturnVoidFailure() throws Exception {
-    assertThrows(WeightlessORMException.class, () -> getDal(Dal.class).failureFindReturnVoid("somestring"));
+    assertThrows(WeightlessException.class, () -> getDal(Dal.class).failureFindReturnVoid("somestring"));
   }
 
   @Test
   public void testFindReturnBooleanFailure() throws Exception {
-    assertThrows(WeightlessORMException.class, () -> getDal(Dal.class).failureFindReturnBoolean("somestring"));
+    assertThrows(WeightlessException.class, () -> getDal(Dal.class).failureFindReturnBoolean("somestring"));
   }
 
   @Test
   public void testFindTwoFiltersTogetherFailure() throws Exception {
-    assertThrows(WeightlessORMException.class, () -> getDal(Dal.class).failureFindTwoFiltersTogether("somestring"));
+    assertThrows(WeightlessException.class, () -> getDal(Dal.class).failureFindTwoFiltersTogether("somestring"));
   }
 
   @Test
   public void testFindFieldNotFirstFailure() throws Exception {
-    assertThrows(WeightlessORMException.class, () -> getDal(Dal.class).failureFindFieldNotFirst("somestring"));
+    assertThrows(WeightlessException.class, () -> getDal(Dal.class).failureFindFieldNotFirst("somestring"));
   }
 
   @Test

@@ -1,7 +1,5 @@
-package com.github.jackhallam.weightless_orm.mongo;
+package com.github.jackhallam.weightless_orm;
 
-import com.github.jackhallam.weightless_orm.Weightless;
-import com.github.jackhallam.weightless_orm.WeightlessORMException;
 import com.github.jackhallam.weightless_orm.annotations.Create;
 import com.github.jackhallam.weightless_orm.annotations.Field;
 import com.github.jackhallam.weightless_orm.annotations.FindOrCreate;
@@ -91,22 +89,22 @@ public class TestFindOrCreate extends TestBase {
 
   @Test
   public void testFindOrCreateFilterNotEqualsFailure() throws Exception {
-    assertThrows(WeightlessORMException.class, () -> getDal(Dal.class).failureFindOrCreateNotEqualsFilter(2));
+    assertThrows(WeightlessException.class, () -> getDal(Dal.class).failureFindOrCreateNotEqualsFilter(2));
   }
 
   @Test
   public void testFindOrCreateReturnListOfListsFailure() throws Exception {
-    assertThrows(WeightlessORMException.class, () -> getDal(Dal.class).failureFindOrCreateReturnListOfLists("hello"));
+    assertThrows(WeightlessException.class, () -> getDal(Dal.class).failureFindOrCreateReturnListOfLists("hello"));
   }
 
   @Test
   public void testFindOrCreateReturnVoidFailure() throws Exception {
-    assertThrows(WeightlessORMException.class, () -> getDal(Dal.class).failureFindOrCreateReturnVoid("hello"));
+    assertThrows(WeightlessException.class, () -> getDal(Dal.class).failureFindOrCreateReturnVoid("hello"));
   }
 
   @Test
   public void testFindOrCreateReturnBooleanFailure() throws Exception {
-    assertThrows(WeightlessORMException.class, () -> getDal(Dal.class).failureFindOrCreateReturnBoolean("hello"));
+    assertThrows(WeightlessException.class, () -> getDal(Dal.class).failureFindOrCreateReturnBoolean("hello"));
   }
 
   public static class TestObject {

@@ -1,6 +1,6 @@
 package com.github.jackhallam.weightless_orm.persistents;
 
-import com.github.jackhallam.weightless_orm.WeightlessORMException;
+import com.github.jackhallam.weightless_orm.WeightlessException;
 import com.github.jackhallam.weightless_orm.annotations.Sort;
 import com.github.jackhallam.weightless_orm.annotations.field_filters.Contains;
 import com.github.jackhallam.weightless_orm.annotations.field_filters.ContainsIgnoreCase;
@@ -92,13 +92,13 @@ public class MongoPersistentStore implements PersistentStore {
   public <T> Iterable<T> update(Iterable<T> tIterable, ConditionHandler conditionHandler) {
     Iterator<T> tIterator = tIterable.iterator();
     if (!tIterator.hasNext()) {
-      throw new WeightlessORMException("No object to use to update.");
+      throw new WeightlessException("No object to use to update.");
     }
 
     T t = tIterator.next();
 
     if (tIterator.hasNext()) {
-      throw new WeightlessORMException("Expected only one object to update but found more than one.");
+      throw new WeightlessException("Expected only one object to update but found more than one.");
     }
 
     Class<T> clazz = (Class<T>) t.getClass();

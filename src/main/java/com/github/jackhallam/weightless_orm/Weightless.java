@@ -6,6 +6,8 @@ import com.github.jackhallam.weightless_orm.annotations.Delete;
 import com.github.jackhallam.weightless_orm.annotations.Find;
 import com.github.jackhallam.weightless_orm.annotations.FindOrCreate;
 import com.github.jackhallam.weightless_orm.annotations.Update;
+import com.github.jackhallam.weightless_orm.builders.InMemoryBuilder;
+import com.github.jackhallam.weightless_orm.builders.MongoBuilder;
 import com.github.jackhallam.weightless_orm.interceptors.BookmarkInterceptor;
 import com.github.jackhallam.weightless_orm.interceptors.CreateInterceptor;
 import com.github.jackhallam.weightless_orm.interceptors.DeleteInterceptor;
@@ -32,6 +34,14 @@ public class Weightless implements Closeable {
     this.persistentStore = persistenceStore;
   }
 
+  public static MongoBuilder mongo() {
+    return new MongoBuilder();
+  }
+
+  public static InMemoryBuilder inMemory() {
+    return new InMemoryBuilder();
+  }
+
   private <T> T getNewInstanceOf(Class<T> clazz) {
     try {
       Class<? extends T> dynamicType = new ByteBuddy()
@@ -53,7 +63,7 @@ public class Weightless implements Closeable {
         .getLoaded();
       return dynamicType.newInstance();
     } catch (InstantiationException | IllegalAccessException e) {
-      throw new WeightlessORMException(e);
+      throw new WeightlessException(e);
     }
   }
 

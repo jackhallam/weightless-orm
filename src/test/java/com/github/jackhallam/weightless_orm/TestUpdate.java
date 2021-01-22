@@ -1,7 +1,5 @@
-package com.github.jackhallam.weightless_orm.mongo;
+package com.github.jackhallam.weightless_orm;
 
-import com.github.jackhallam.weightless_orm.Weightless;
-import com.github.jackhallam.weightless_orm.WeightlessORMException;
 import com.github.jackhallam.weightless_orm.annotations.Create;
 import com.github.jackhallam.weightless_orm.annotations.Field;
 import com.github.jackhallam.weightless_orm.annotations.Find;
@@ -75,7 +73,7 @@ public class TestUpdate extends TestBase {
 
   @Test
   public void testUpdateReturnVoidEmptyFailure() throws Exception {
-    assertThrows(WeightlessORMException.class, () -> getDal(Dal.class).updateReturnVoid(new TestObject(), "world"));
+    assertThrows(WeightlessException.class, () -> getDal(Dal.class).updateReturnVoid(new TestObject(), "world"));
   }
 
   @Test
@@ -143,7 +141,7 @@ public class TestUpdate extends TestBase {
 
   @Test
   public void testUpdateNoObjectsFailure() throws Exception {
-    assertThrows(WeightlessORMException.class, () -> getDal(Dal.class).failureUpdateList(Collections.emptyList(), "hello"));
+    assertThrows(WeightlessException.class, () -> getDal(Dal.class).failureUpdateList(Collections.emptyList(), "hello"));
   }
 
   @Test
@@ -164,7 +162,7 @@ public class TestUpdate extends TestBase {
 
     List<TestObject> testObjects = Arrays.asList(firstTestObject, secondTestObject);
 
-    assertThrows(WeightlessORMException.class, () -> getDal(Dal.class).failureUpdateList(testObjects, "hello"));
+    assertThrows(WeightlessException.class, () -> getDal(Dal.class).failureUpdateList(testObjects, "hello"));
   }
 
   public static class TestObject {

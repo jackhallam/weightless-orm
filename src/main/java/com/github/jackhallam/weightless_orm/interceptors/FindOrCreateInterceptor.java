@@ -1,6 +1,6 @@
 package com.github.jackhallam.weightless_orm.interceptors;
 
-import com.github.jackhallam.weightless_orm.WeightlessORMException;
+import com.github.jackhallam.weightless_orm.WeightlessException;
 import com.github.jackhallam.weightless_orm.annotations.field_filters.Equals;
 import com.github.jackhallam.weightless_orm.interceptors.handlers.ConditionHandler;
 import com.github.jackhallam.weightless_orm.interceptors.handlers.ReturnHandler;
@@ -33,7 +33,7 @@ public class FindOrCreateInterceptor {
     ConditionHandler conditionHandler = new ConditionHandler(method.getParameters(), allArguments);
     conditionHandler.getSubFiltersIterator().forEachRemaining(subFilter -> {
       if (!subFilter.filterTypeAnnotation.annotationType().equals(Equals.class)) {
-        throw new WeightlessORMException("Only " + Equals.class + " allowed in FindOrCreate");
+        throw new WeightlessException("Only " + Equals.class + " allowed in FindOrCreate");
       }
     });
     conditionHandler = new ConditionHandler(method.getParameters(), allArguments);
@@ -45,7 +45,7 @@ public class FindOrCreateInterceptor {
     try {
       clazz = (Class<T>) Class.forName(findOrCreateReturnHandler.inferInnerTypeIfPresent((method.getGenericReturnType())).getTypeName());
     } catch (ClassNotFoundException e) {
-      throw new WeightlessORMException(e);
+      throw new WeightlessException(e);
     }
 
     // Get the iterator from the persistentStore
@@ -82,12 +82,12 @@ public class FindOrCreateInterceptor {
           field.set(t, fieldValue);
           field.setAccessible(isAccessible);
         } catch (NoSuchFieldException | IllegalAccessException e) {
-          throw new WeightlessORMException(e);
+          throw new WeightlessException(e);
         }
       });
       return t;
     } catch (InstantiationException | IllegalAccessException e) {
-      throw new WeightlessORMException(e);
+      throw new WeightlessException(e);
     }
   }
 
@@ -95,12 +95,12 @@ public class FindOrCreateInterceptor {
 
     @Override
     public void handleVoid(Iterable<T> tIterable) {
-      throw new WeightlessORMException("Void cannot be the return type of FindOrCreate");
+      throw new WeightlessException("Void cannot be the return type of FindOrCreate");
     }
 
     @Override
     public boolean handleBoolean(Iterable<T> tIterable) {
-      throw new WeightlessORMException("Boolean cannot be the return type of FindOrCreate");
+      throw new WeightlessException("Boolean cannot be the return type of FindOrCreate");
     }
 
     @Override
