@@ -1,8 +1,6 @@
 <p align="center">
-<img width="150" height="150" src="weightlessicon.png" title="windy by K available at https://thenounproject.com/k4dezign/collection/weather/?i=455834. CC 3.0 BY licensed (http://creativecommons.org/licenses/by/3.0/)">
+<img width="600" src="weightless.svg">
 </p>
-
-<h1 align="center">Weightless</h1>
 
 [![Github Code](https://img.shields.io/github/languages/top/jackhallam/weightless-orm?logo=github&logoColor=lightgrey)](https://github.com/jackhallam/weightless-orm)
 [![Travis CI Build Status](https://img.shields.io/travis/com/jackhallam/weightless-orm?logo=Travis-CI&logoColor=lightgrey)](https://travis-ci.com/jackhallam/weightless-orm)
