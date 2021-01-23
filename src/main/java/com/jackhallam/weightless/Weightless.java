@@ -6,8 +6,6 @@ import com.jackhallam.weightless.annotations.Delete;
 import com.jackhallam.weightless.annotations.Find;
 import com.jackhallam.weightless.annotations.FindOrCreate;
 import com.jackhallam.weightless.annotations.Update;
-import com.jackhallam.weightless.builders.InMemoryBuilder;
-import com.jackhallam.weightless.builders.MongoBuilder;
 import com.jackhallam.weightless.interceptors.BookmarkInterceptor;
 import com.jackhallam.weightless.interceptors.CreateInterceptor;
 import com.jackhallam.weightless.interceptors.DeleteInterceptor;
@@ -29,7 +27,7 @@ public class Weightless implements Closeable {
   private final PersistentStore persistentStore;
   private final Map<String, Object> interceptedClassNameToObject;
 
-  public Weightless(PersistentStore persistenceStore) {
+  protected Weightless(PersistentStore persistenceStore) {
     this.interceptedClassNameToObject = new HashMap<>();
     this.persistentStore = persistenceStore;
   }
