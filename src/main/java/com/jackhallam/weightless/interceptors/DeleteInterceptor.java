@@ -21,6 +21,11 @@ public class DeleteInterceptor {
 
   /**
    * Intercept a @Delete method
+   *
+   * @param allArguments the real values passed as arguments to the intercepted method
+   * @param method       the method details
+   * @param <T>          the inner type to be returned
+   * @return the output of the intercepted method
    */
   @RuntimeType
   public <T> Object intercept(@AllArguments Object[] allArguments, @Origin java.lang.reflect.Method method) {

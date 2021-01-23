@@ -21,13 +21,10 @@ public class MongoBuilder {
   }
 
   /**
-   * <p>Set the Mongo Database name to use. The database is created if it does not exist. If this parameter is not passed...
-   *   <ul>
-   *    <li>... and there are no databases available to connect to, a new database with a random name will be created.</li>
-   *    <li>... and there is only one database available to connect to, that single database will be chosen.</li>
-   *    <li>... and there are two or more databases available to connect to, a RuntimeException will be thrown.</li>
-   *   </ul>
-   * </p>
+   * <p>Set the Mongo Database name to use. The database is created if it does not exist. If this parameter is not passed...</p>
+   * <p>... and there are no databases available to connect to, a new database with a random name will be created.</p>
+   * <p>... and there is only one database available to connect to, that single database will be chosen.</p>
+   * <p>... and there are two or more databases available to connect to, a RuntimeException will be thrown.</p>
    *
    * @param databaseName the database name
    * @return MongoBuilder
