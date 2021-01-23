@@ -21,22 +21,7 @@ Weightless is a [object-relational](https://en.wikipedia.org/wiki/Object%E2%80%9
 ## Getting Started
 
 ### Installation
-Add Weightless to your project with [Jitpack](https://jitpack.io/#jackhallam/weightless-orm).
-```xml
-<repositories>
-  <repository>
-    <id>jitpack.io</id>
-    <url>https://jitpack.io</url>
-  </repository>
-</repositories>
-```
-```xml
-<dependency>
-  <groupId>com.github.jackhallam</groupId>
-  <artifactId>weightless-orm</artifactId>
-  <version>see Jitpack for latest version</version>
-</dependency>
-```
+Maven central installation coming soon...
 
 ### Basic Usage
 Assume we have a `Person` object we want to read and write to a database
