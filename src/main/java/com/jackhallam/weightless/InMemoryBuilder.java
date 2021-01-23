@@ -1,6 +1,5 @@
-package com.jackhallam.weightless.builders;
+package com.jackhallam.weightless;
 
-import com.jackhallam.weightless.Weightless;
 import com.jackhallam.weightless.persistents.InMemoryPersistentStore;
 import com.jackhallam.weightless.persistents.PersistentStore;
 

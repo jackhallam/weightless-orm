@@ -1,7 +1,5 @@
-package com.jackhallam.weightless.builders;
+package com.jackhallam.weightless;
 
-import com.jackhallam.weightless.Weightless;
-import com.jackhallam.weightless.WeightlessException;
 import com.jackhallam.weightless.persistents.MongoPersistentStore;
 import com.jackhallam.weightless.persistents.PersistentStore;
 import com.mongodb.MongoClient;
