@@ -2,7 +2,7 @@
 <img width="150" height="150" src="weightlessicon.png" title="windy by K available at https://thenounproject.com/k4dezign/collection/weather/?i=455834. CC 3.0 BY licensed (http://creativecommons.org/licenses/by/3.0/)">
 </p>
 
-<h1 align="center">Weightless ORM</h1>
+<h1 align="center">Weightless</h1>
 
 [![Github Code](https://img.shields.io/github/languages/top/jackhallam/weightless-orm?logo=github&logoColor=lightgrey)](https://github.com/jackhallam/weightless-orm)
 [![Travis CI Build Status](https://img.shields.io/travis/com/jackhallam/weightless-orm?logo=Travis-CI&logoColor=lightgrey)](https://travis-ci.com/jackhallam/weightless-orm)
@@ -16,27 +16,12 @@
 [![codecov](https://img.shields.io/codecov/c/gh/jackhallam/weightless-orm?logo=codecov&logoColor=lightgrey&token=LP3NP6IVS6)](https://codecov.io/gh/jackhallam/weightless-orm)
 
 ## About
-Weightless is a [object-relational mapper](https://en.wikipedia.org/wiki/Object%E2%80%93relational_mapping) library for Java. Save and query Java objects in a database in just a few lines of code. Weightless is still in development, and currently supports MongoDB and a generic in-memory store for testing.
+Weightless is a [object-relational](https://en.wikipedia.org/wiki/Object%E2%80%93relational_mapping) and [object-document](https://en.wikipedia.org/wiki/Document-oriented_database) mapping library for Java. Save and query Java objects in a database in just a few lines of code. Weightless is still in development, and currently supports MongoDB and a generic in-memory store for testing.
 
 ## Getting Started
 
 ### Installation
-Add Weightless to your project with [Jitpack](https://jitpack.io/#jackhallam/weightless-orm).
-```xml
-<repositories>
-  <repository>
-    <id>jitpack.io</id>
-    <url>https://jitpack.io</url>
-  </repository>
-</repositories>
-```
-```xml
-<dependency>
-  <groupId>com.github.jackhallam</groupId>
-  <artifactId>weightless-orm</artifactId>
-  <version>see Jitpack for latest version</version>
-</dependency>
-```
+Maven central installation coming soon...
 
 ### Basic Usage
 Assume we have a `Person` object we want to read and write to a database
