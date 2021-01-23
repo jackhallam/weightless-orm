@@ -8,9 +8,6 @@
 [![CodeFactor Code Quality](https://img.shields.io/codefactor/grade/github/jackhallam/weightless-orm?logo=codefactor&logoColor=lightgrey)](https://www.codefactor.io/repository/github/jackhallam/weightless-orm)
 [![LGTM Code Quality](https://img.shields.io/lgtm/grade/java/github/jackhallam/weightless-orm?label=code%20quality&logo=lgtm&logoColor=lightgrey)](https://lgtm.com/projects/g/jackhallam/weightless-orm)
 [![LGTM Alerts](https://img.shields.io/lgtm/alerts/github/jackhallam/weightless-orm?label=alerts&logo=lgtm&logoColor=lightgrey)](https://lgtm.com/projects/g/jackhallam/weightless-orm)
-[![Code Climate Technical Debt](https://img.shields.io/codeclimate/tech-debt/jackhallam/weightless-orm?logo=code-climate&logoColor=lightgrey)](https://codeclimate.com/github/jackhallam/weightless-orm)
-[![Code Climate Maintainability](https://img.shields.io/codeclimate/maintainability/jackhallam/weightless-orm?logo=code-climate&logoColor=lightgrey)](https://codeclimate.com/github/jackhallam/weightless-orm)
-[![Code Climate Issues](https://img.shields.io/codeclimate/issues/jackhallam/weightless-orm?logo=code-climate&logoColor=lightgrey)](https://codeclimate.com/github/jackhallam/weightless-orm)
 [![codecov](https://img.shields.io/codecov/c/gh/jackhallam/weightless-orm?logo=codecov&logoColor=lightgrey&token=LP3NP6IVS6)](https://codecov.io/gh/jackhallam/weightless-orm)
 
 ## About
