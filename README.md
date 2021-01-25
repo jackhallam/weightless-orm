@@ -13,8 +13,6 @@ Weightless is an [object-relational](https://en.wikipedia.org/wiki/Object%E2%80%
 [![codecov](https://img.shields.io/codecov/c/gh/jackhallam/weightless-orm?logo=codecov&logoColor=lightgrey&token=LP3NP6IVS6)](https://codecov.io/gh/jackhallam/weightless-orm)
 
 ## Getting Started
-
-### Example
 Suppose we have a `Person` object we want to store in a Mongo database.
 ```java
 class Person {
@@ -43,11 +41,10 @@ personAccess.create(james);
 personAccess.findByName("James"); // { "name": "James", "age": 30 }
 ```
 
-### Installation
-Maven central installation coming soon...
+## Installation
+Maven installation coming soon...
 
-### Going Further
-
+## Going Further
 ```java
 /**
  * Let's look at the different features of the access objects
