@@ -2,8 +2,8 @@
 <img width="600" src="weightless.svg">
 </p>
 
+Weightless is an [object-relational](https://en.wikipedia.org/wiki/Object%E2%80%93relational_mapping) / [object-document](https://en.wikipedia.org/wiki/Document-oriented_database) mapping library for Java. In other words, it helps you save Java objects to a database and query them later. Weightless currently supports **MongoDB**.
 
-## About Weightless
 [![Github Code](https://img.shields.io/github/languages/top/jackhallam/weightless-orm?logo=github&logoColor=lightgrey)](https://github.com/jackhallam/weightless-orm)
 [![Travis CI Build Status](https://img.shields.io/travis/com/jackhallam/weightless-orm?logo=Travis-CI&logoColor=lightgrey)](https://travis-ci.com/jackhallam/weightless-orm)
 [![Codacy Badge](https://img.shields.io/codacy/grade/87dafa74154349a0af3878b3435b0f98?logo=codacy&logoColor=lightgrey)](https://app.codacy.com/gh/jackhallam/weightless-orm?utm_source=github.com&utm_medium=referral&utm_content=jackhallam/weightless-orm&utm_campaign=Badge_Grade)
@@ -12,19 +12,17 @@
 [![LGTM Alerts](https://img.shields.io/lgtm/alerts/github/jackhallam/weightless-orm?label=alerts&logo=lgtm&logoColor=lightgrey)](https://lgtm.com/projects/g/jackhallam/weightless-orm)
 [![codecov](https://img.shields.io/codecov/c/gh/jackhallam/weightless-orm?logo=codecov&logoColor=lightgrey&token=LP3NP6IVS6)](https://codecov.io/gh/jackhallam/weightless-orm)
 
-Weightless is an [object-relational](https://en.wikipedia.org/wiki/Object%E2%80%93relational_mapping) / [object-document](https://en.wikipedia.org/wiki/Document-oriented_database) mapping library for Java. *In other words, it helps you save Java objects to a database and query them later*. Weightless currently supports **MongoDB**.
-
 ## Getting Started
 
 ### Example
-Suppose have a `Person` object we want to store in a MongoDB database
+Suppose we have a `Person` object we want to store in a Mongo database
 ```java
 class Person {
   String name;
   int age;
 }
 ```
-Using the Weightless library, the next logical class we create is a `PersonAccess` interface.
+With the Weightless library, the next class we will create is a `PersonAccess` interface. Note the method level and parameter level annotations.
 ```java
 interface PersonAccess {
   @Create
@@ -34,10 +32,10 @@ interface PersonAccess {
   Person findByName(@Field("name") @Equals String name);
 }
 ```
-Wait! We do not **ever** have to implement this interface! Weightless has enough information to implement it for us at runtime.
+Wait! We never have to implement this interface! Weightless has enough information to implement this class for us at runtime.
 ```java
-Weightless weightless = Weightless.mongo("mongodb://localhost:27017").build(); // Connect to MongoDB running locally
-PersonAccess personAccess = weightless.get(PersonAccess.class);
+Weightless weightless = Weightless.mongo("mongodb://localhost:27017").build(); // Connect to a local MongoDB instance
+PersonAccess personAccess = weightless.get(PersonAccess.class); // PersonAccess is implimented for us here
 
 Person james = new Person("James", 30);
 personAccess.create(james);
@@ -48,7 +46,7 @@ personAccess.findByName("James"); // { "name": "James", "age": 30 }
 ### Installation
 Maven central installation coming soon...
 
-### Advanced Usage
+### Going Further
 
 ```java
 /**

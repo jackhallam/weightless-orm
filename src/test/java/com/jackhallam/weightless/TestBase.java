@@ -57,7 +57,7 @@ public class TestBase {
           mongoServer = new MongoServer(new MemoryBackend());
           InetSocketAddress serverAddress = mongoServer.bind();
           MongoClient mongoClient = new MongoClient(new ServerAddress(serverAddress));
-          return Weightless.mongo().client(mongoClient).build();
+          return Weightless.mongo(new ServerAddress(serverAddress).toString()).build();
         }
       }
     };

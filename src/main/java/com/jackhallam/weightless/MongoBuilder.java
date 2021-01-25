@@ -3,6 +3,7 @@ package com.jackhallam.weightless;
 import com.jackhallam.weightless.persistents.MongoPersistentStore;
 import com.jackhallam.weightless.persistents.PersistentStore;
 import com.mongodb.MongoClient;
+import com.mongodb.ServerAddress;
 
 import java.util.List;
 import java.util.UUID;
@@ -10,12 +11,11 @@ import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 public class MongoBuilder {
-  private MongoClient mongoClient;
+  private final MongoClient mongoClient;
   private String databaseName;
 
-  public MongoBuilder client(MongoClient mongoClient) {
-    this.mongoClient = mongoClient;
-    return this;
+  public MongoBuilder(String connectionString) {
+    this.mongoClient = new MongoClient(new ServerAddress(connectionString));
   }
 
   /**
