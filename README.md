@@ -2,7 +2,7 @@
 <img width="600" src="weightlesslogo.png">
 </p>
 
-Weightless is an [object-relational](https://en.wikipedia.org/wiki/Object%E2%80%93relational_mapping) / [object-document](https://en.wikipedia.org/wiki/Document-oriented_database) mapping library for Java. In other words, it helps you save Java objects to a database and query them later. Weightless currently supports **MongoDB**.
+Weightless is an [object-relational](https://en.wikipedia.org/wiki/Object%E2%80%93relational_mapping) / [object-document](https://en.wikipedia.org/wiki/Document-oriented_database) mapping library for Java. In other words, it helps you save Java objects to a database and query them later. Weightless currently supports [MongoDB](https://www.mongodb.com).
 
 [![Github Code](https://img.shields.io/github/languages/top/jackhallam/weightless-orm?logo=github&logoColor=lightgrey)](https://github.com/jackhallam/weightless-orm)
 [![Travis CI Build Status](https://img.shields.io/travis/com/jackhallam/weightless-orm?logo=Travis-CI&logoColor=lightgrey)](https://travis-ci.com/jackhallam/weightless-orm)
