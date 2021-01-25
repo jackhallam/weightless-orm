@@ -1,5 +1,5 @@
 <p align="center">
-<img width="600" src="weightless.svg">
+<img width="600" src="weightlesslogo.png">
 </p>
 
 Weightless is an [object-relational](https://en.wikipedia.org/wiki/Object%E2%80%93relational_mapping) / [object-document](https://en.wikipedia.org/wiki/Document-oriented_database) mapping library for Java. In other words, it helps you save Java objects to a database and query them later. Weightless currently supports **MongoDB**.
@@ -15,7 +15,7 @@ Weightless is an [object-relational](https://en.wikipedia.org/wiki/Object%E2%80%
 ## Getting Started
 
 ### Example
-Suppose we have a `Person` object we want to store in a Mongo database
+Suppose we have a `Person` object we want to store in a Mongo database.
 ```java
 class Person {
   String name;
@@ -35,7 +35,7 @@ interface PersonAccess {
 Wait! We never have to implement this interface! Weightless has enough information to implement this class for us at runtime.
 ```java
 Weightless weightless = Weightless.mongo("mongodb://localhost:27017").build(); // Connect to a local MongoDB instance
-PersonAccess personAccess = weightless.get(PersonAccess.class); // PersonAccess is implimented for us here
+PersonAccess personAccess = weightless.get(PersonAccess.class); // PersonAccess is implemented for us here
 
 Person james = new Person("James", 30);
 personAccess.create(james);

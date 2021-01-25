@@ -27,9 +27,9 @@
 
     <dependencies>
         <dependency>
-            <groupId>de.bwaldvogel</groupId>
-            <artifactId>mongo-java-server</artifactId>
-            <version>1.36.0</version>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-nop</artifactId>
+            <version>2.0.0-alpha1</version>
         </dependency>
         <dependency>
             <groupId>org.mongodb</groupId>
@@ -42,24 +42,15 @@
             <version>1.5.3</version>
         </dependency>
         <dependency>
-            <groupId>org.reflections</groupId>
-            <artifactId>reflections</artifactId>
-            <version>0.9.12</version>
-        </dependency>
-        <dependency>
             <groupId>net.bytebuddy</groupId>
             <artifactId>byte-buddy-dep</artifactId>
             <version>1.10.18</version>
         </dependency>
         <dependency>
-            <groupId>net.sf.supercsv</groupId>
-            <artifactId>super-csv</artifactId>
-            <version>2.4.0</version>
-        </dependency>
-        <dependency>
-            <groupId>com.j256.simplecsv</groupId>
-            <artifactId>simplecsv</artifactId>
-            <version>2.6</version>
+            <groupId>de.bwaldvogel</groupId>
+            <artifactId>mongo-java-server</artifactId>
+            <version>1.36.0</version>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>junit</groupId>
@@ -70,7 +61,13 @@
     </dependencies>
 
     <profiles>
-        <!-- use `mvn -DperformRelease=true ...` to sign artifacts -->
+        <!-- Release steps:
+        mvn clean
+        mvn compile -DperformRelease=true
+        mvn package -DperformRelease=true
+        mvn verify -DperformRelease=true
+        mvn install -DperformRelease=true
+        mvn deploy  -DperformRelease=true -->
         <profile>
             <id>release-sign-artifacts</id>
             <activation>
