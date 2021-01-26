@@ -58,37 +58,31 @@ public abstract class ReturnHandler<T> {
   }
 
   public Function<Iterable<T>, Object> pick(Class<Object> clazz) {
-    if (clazz.equals(void.class) || clazz.equals(Void.class)) {
-      return tIterable -> {
-        handleVoid(tIterable);
-        return new Object();
-      };
+    Map<Class, Function<Iterable<T>, Object>> pickMap = pickMap(this);
+    if (pickMap.containsKey(clazz)) {
+      return pickMap.get(clazz);
     }
-
-    if (clazz.equals(boolean.class) || clazz.equals(Boolean.class)) {
-      return this::handleBoolean;
-    }
-
-    if (clazz.equals(Iterable.class)) {
-      return this::handleIterable;
-    }
-
-    if (clazz.equals(Stream.class)) {
-      return tIterable -> StreamSupport.stream(tIterable.spliterator(), false);
-    }
-
-    if (clazz.equals(Iterator.class)) {
-      return tIterable -> StreamSupport.stream(tIterable.spliterator(), false).iterator();
-    }
-
-    if (clazz.equals(Collection.class) || clazz.equals(List.class)) {
-      return tIterable -> StreamSupport.stream(tIterable.spliterator(), false).collect(Collectors.toList());
-    }
-
-    if (clazz.equals(Optional.class)) {
-      return this::handleOptional;
-    }
-
     return this::handlePojo;
+  }
+
+  private Map<Class, Function<Iterable<T>, Object>> pickMap(ReturnHandler<T> returnHandler) {
+    Map<Class, Function<Iterable<T>, Object>> pickMap = new HashMap<>();
+    pickMap.put(void.class, tIterable -> {
+      handleVoid(tIterable);
+      return new Object();
+    });
+    pickMap.put(Void.class, tIterable -> {
+      handleVoid(tIterable);
+      return new Object();
+    });
+    pickMap.put(boolean.class, returnHandler::handleBoolean);
+    pickMap.put(Boolean.class, returnHandler::handleBoolean);
+    pickMap.put(Iterable.class, returnHandler::handleIterable);
+    pickMap.put(Stream.class, tIterable -> StreamSupport.stream(tIterable.spliterator(), false));
+    pickMap.put(Iterator.class, tIterable -> StreamSupport.stream(tIterable.spliterator(), false).iterator());
+    pickMap.put(Collection.class, tIterable -> StreamSupport.stream(tIterable.spliterator(), false).collect(Collectors.toList()));
+    pickMap.put(List.class, tIterable -> StreamSupport.stream(tIterable.spliterator(), false).collect(Collectors.toList()));
+    pickMap.put(Optional.class, returnHandler::handleOptional);
+    return pickMap;
   }
 }

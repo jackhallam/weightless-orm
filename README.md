@@ -9,8 +9,8 @@ Weightless is an [object-relational](https://en.wikipedia.org/wiki/Object%E2%80%
 [![Codacy Badge](https://img.shields.io/codacy/grade/87dafa74154349a0af3878b3435b0f98?logo=codacy&logoColor=lightgrey)](https://app.codacy.com/gh/jackhallam/weightless-orm?utm_source=github.com&utm_medium=referral&utm_content=jackhallam/weightless-orm&utm_campaign=Badge_Grade)
 [![CodeFactor Code Quality](https://img.shields.io/codefactor/grade/github/jackhallam/weightless-orm?logo=codefactor&logoColor=lightgrey)](https://www.codefactor.io/repository/github/jackhallam/weightless-orm)
 [![LGTM Code Quality](https://img.shields.io/lgtm/grade/java/github/jackhallam/weightless-orm?label=code%20quality&logo=lgtm&logoColor=lightgrey)](https://lgtm.com/projects/g/jackhallam/weightless-orm)
-[![LGTM Alerts](https://img.shields.io/lgtm/alerts/github/jackhallam/weightless-orm?label=alerts&logo=lgtm&logoColor=lightgrey)](https://lgtm.com/projects/g/jackhallam/weightless-orm)
 [![codecov](https://img.shields.io/codecov/c/gh/jackhallam/weightless-orm?logo=codecov&logoColor=lightgrey&token=LP3NP6IVS6)](https://codecov.io/gh/jackhallam/weightless-orm)
+[![Gitter](https://img.shields.io/gitter/room/jackhallam/weightless-orm?color=%234fb999&logo=gitter&logoColor=lightgrey)](https://gitter.im/weightless-orm)
 
 ## Getting Started
 Suppose we have a `Person` object we want to store in a Mongo database.

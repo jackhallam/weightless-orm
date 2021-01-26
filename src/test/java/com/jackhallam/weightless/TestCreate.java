@@ -49,6 +49,7 @@ public class TestCreate extends TestBase {
     TestObject testObject = new TestObject();
     testObject.testField = "hello";
     getDal(Dal.class).createAllReturnVoid(Collections.singletonList(testObject));
+    assertEquals("hello", testObject.testField);
   }
 
   @Test
