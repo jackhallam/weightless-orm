@@ -32,8 +32,8 @@ public class Weightless implements Closeable {
     this.persistentStore = persistenceStore;
   }
 
-  public static MongoBuilder mongo() {
-    return new MongoBuilder();
+  public static MongoBuilder mongo(String connectionUrl) {
+    return new MongoBuilder(connectionUrl);
   }
 
   public static InMemoryBuilder inMemory() {

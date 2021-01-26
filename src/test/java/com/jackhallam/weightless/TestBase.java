@@ -1,6 +1,5 @@
 package com.jackhallam.weightless;
 
-import com.mongodb.MongoClient;
 import com.mongodb.ServerAddress;
 import de.bwaldvogel.mongo.MongoServer;
 import de.bwaldvogel.mongo.backend.memory.MemoryBackend;
@@ -56,8 +55,7 @@ public class TestBase {
         (Supplier<Weightless>) () -> {
           mongoServer = new MongoServer(new MemoryBackend());
           InetSocketAddress serverAddress = mongoServer.bind();
-          MongoClient mongoClient = new MongoClient(new ServerAddress(serverAddress));
-          return Weightless.mongo().client(mongoClient).build();
+          return Weightless.mongo(new ServerAddress(serverAddress).toString()).build();
         }
       }
     };

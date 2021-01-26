@@ -1,37 +1,26 @@
 <p align="center">
-<img width="150" height="150" src="weightlessicon.png" title="windy by K available at https://thenounproject.com/k4dezign/collection/weather/?i=455834. CC 3.0 BY licensed (http://creativecommons.org/licenses/by/3.0/)">
+<img width="600" src="weightlesslogo.png">
 </p>
 
-<h1 align="center">Weightless</h1>
+Weightless is an [object-relational](https://en.wikipedia.org/wiki/Object%E2%80%93relational_mapping) / [object-document](https://en.wikipedia.org/wiki/Document-oriented_database) mapping library for Java. In other words, it helps you save Java objects to a database and query them later. Weightless currently supports [MongoDB](https://www.mongodb.com).
 
 [![Github Code](https://img.shields.io/github/languages/top/jackhallam/weightless-orm?logo=github&logoColor=lightgrey)](https://github.com/jackhallam/weightless-orm)
 [![Travis CI Build Status](https://img.shields.io/travis/com/jackhallam/weightless-orm?logo=Travis-CI&logoColor=lightgrey)](https://travis-ci.com/jackhallam/weightless-orm)
 [![Codacy Badge](https://img.shields.io/codacy/grade/87dafa74154349a0af3878b3435b0f98?logo=codacy&logoColor=lightgrey)](https://app.codacy.com/gh/jackhallam/weightless-orm?utm_source=github.com&utm_medium=referral&utm_content=jackhallam/weightless-orm&utm_campaign=Badge_Grade)
 [![CodeFactor Code Quality](https://img.shields.io/codefactor/grade/github/jackhallam/weightless-orm?logo=codefactor&logoColor=lightgrey)](https://www.codefactor.io/repository/github/jackhallam/weightless-orm)
 [![LGTM Code Quality](https://img.shields.io/lgtm/grade/java/github/jackhallam/weightless-orm?label=code%20quality&logo=lgtm&logoColor=lightgrey)](https://lgtm.com/projects/g/jackhallam/weightless-orm)
-[![LGTM Alerts](https://img.shields.io/lgtm/alerts/github/jackhallam/weightless-orm?label=alerts&logo=lgtm&logoColor=lightgrey)](https://lgtm.com/projects/g/jackhallam/weightless-orm)
-[![Code Climate Technical Debt](https://img.shields.io/codeclimate/tech-debt/jackhallam/weightless-orm?logo=code-climate&logoColor=lightgrey)](https://codeclimate.com/github/jackhallam/weightless-orm)
-[![Code Climate Maintainability](https://img.shields.io/codeclimate/maintainability/jackhallam/weightless-orm?logo=code-climate&logoColor=lightgrey)](https://codeclimate.com/github/jackhallam/weightless-orm)
-[![Code Climate Issues](https://img.shields.io/codeclimate/issues/jackhallam/weightless-orm?logo=code-climate&logoColor=lightgrey)](https://codeclimate.com/github/jackhallam/weightless-orm)
 [![codecov](https://img.shields.io/codecov/c/gh/jackhallam/weightless-orm?logo=codecov&logoColor=lightgrey&token=LP3NP6IVS6)](https://codecov.io/gh/jackhallam/weightless-orm)
-
-## About
-Weightless is a [object-relational](https://en.wikipedia.org/wiki/Object%E2%80%93relational_mapping) and [object-document](https://en.wikipedia.org/wiki/Document-oriented_database) mapping library for Java. Save and query Java objects in a database in just a few lines of code. Weightless is still in development, and currently supports MongoDB and a generic in-memory store for testing.
+[![Gitter](https://img.shields.io/gitter/room/jackhallam/weightless-orm?color=%234fb999&logo=gitter&logoColor=lightgrey)](https://gitter.im/weightless-orm)
 
 ## Getting Started
-
-### Installation
-Maven central installation coming soon...
-
-### Basic Usage
-Assume we have a `Person` object we want to read and write to a database
+Suppose we have a `Person` object we want to store in a Mongo database.
 ```java
 class Person {
   String name;
   int age;
 }
 ```
-We can define a `PersonAccess` interface that describes how to access `Person` objects
+With the Weightless library, the next class we will create is a `PersonAccess` interface. Note the method level and parameter level annotations.
 ```java
 interface PersonAccess {
   @Create
@@ -41,10 +30,10 @@ interface PersonAccess {
   Person findByName(@Field("name") @Equals String name);
 }
 ```
-We never created a class that implemented the interface `PersonAccess`. Instead, the Weightless library creates the concrete implementation at runtime. Magic! 🪄✨
+Wait! We never have to implement this interface! Weightless has enough information to implement this class for us at runtime.
 ```java
-Weightless weightless = WeightlessORMBuilder.inMemory().build(); // In-Memory database for local testing
-PersonAccess personAccess = weightless.get(PersonAccess.class);
+Weightless weightless = Weightless.mongo("mongodb://localhost:27017").build(); // Connect to a local MongoDB instance
+PersonAccess personAccess = weightless.get(PersonAccess.class); // PersonAccess is implemented for us here
 
 Person james = new Person("James", 30);
 personAccess.create(james);
@@ -52,8 +41,10 @@ personAccess.create(james);
 personAccess.findByName("James"); // { "name": "James", "age": 30 }
 ```
 
-### Advanced Usage
+## Installation
+Maven installation coming soon...
 
+## Going Further
 ```java
 /**
  * Let's look at the different features of the access objects
