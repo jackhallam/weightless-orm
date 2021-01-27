@@ -9,7 +9,7 @@
     <version>0.1.0-SNAPSHOT</version>
 
     <name>${project.groupId}:${project.artifactId}</name>
-    <description>An object-relational mapper for high velocity development</description>
+    <description>A lightweight database mapping library</description>
     <url>https://github.com/jackhallam/weightless-orm</url>
 
     <licenses>
