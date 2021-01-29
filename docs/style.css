@@ -1,0 +1,7 @@
+body article, body footer, body header, body main {
+  max-width: 60rem !important;
+}
+
+img {
+  width: 30rem !important;
+}
