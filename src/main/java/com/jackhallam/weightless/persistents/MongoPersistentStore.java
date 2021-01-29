@@ -22,6 +22,7 @@ import com.jackhallam.weightless.interceptors.handlers.SortHandler;
 import com.mongodb.MongoClient;
 import dev.morphia.Datastore;
 import dev.morphia.Morphia;
+import dev.morphia.mapping.MappingException;
 import dev.morphia.query.FieldEnd;
 import dev.morphia.query.Query;
 import dev.morphia.query.ValidationException;
@@ -47,7 +48,10 @@ public class MongoPersistentStore implements PersistentStore {
   public MongoPersistentStore(MongoClient mongoClient, String databaseName) {
     this.mongoClient = mongoClient;
     Morphia morphia = new Morphia();
-    morphia.mapPackage("");
+    try {
+      morphia.mapPackage("");
+    } catch (MappingException ignored) {
+    }
     datastore = morphia.createDatastore(mongoClient, databaseName);
   }
 
