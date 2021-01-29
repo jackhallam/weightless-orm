@@ -3,7 +3,7 @@ package com.jackhallam.weightless;
 import com.jackhallam.weightless.persistents.MongoPersistentStore;
 import com.jackhallam.weightless.persistents.PersistentStore;
 import com.mongodb.MongoClient;
-import com.mongodb.ServerAddress;
+import com.mongodb.MongoClientURI;
 
 import java.util.List;
 import java.util.UUID;
@@ -15,7 +15,7 @@ public class MongoBuilder {
   private String databaseName;
 
   public MongoBuilder(String connectionString) {
-    this.mongoClient = new MongoClient(new ServerAddress(connectionString));
+    this.mongoClient = new MongoClient(new MongoClientURI(connectionString));
   }
 
   /**
