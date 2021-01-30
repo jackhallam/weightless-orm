@@ -11,6 +11,14 @@
   <link rel="stylesheet" media="(prefers-color-scheme: no-preference), (prefers-color-scheme: light)" href="//igoradamenko.github.io/awsm.css/css/awsm_theme_white.min.css"/>
   <link rel="stylesheet" media='(prefers-color-scheme: dark)' href="//igoradamenko.github.io/awsm.css/css/awsm_theme_black.min.css"/>
   <link rel="stylesheet" href="style.css" type="text/css">
+
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-L21CB04EGY"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){ dataLayer.push(arguments); }
+    gtag('js', new Date());
+    gtag('config', 'G-L21CB04EGY');
+  </script>
 </head>
 
 <body>
@@ -25,7 +33,7 @@
       <ul>
         <li>Quickstart</li>
         <li><a href="https://github.com/jackhallam/weightless-orm">Github</a></li>
-        <li><a href="https://gitter.im/weightless-orm">Chat on Gitter</a></li>
+        <li><a href="https://gitter.im/weightless-orm/weightless-orm">Chat on Gitter</a></li>
         </li>
       </ul>
     </nav>
@@ -36,7 +44,7 @@
 
     <img src="https://github.com/jackhallam/weightless-orm/blob/master/weightlesslogo.png?raw=true">
 
-    <p>Weightless is an <a href="https://en.wikipedia.org/wiki/Object%E2%80%93relational_mapping">object-relational</a> / <a href="https://en.wikipedia.org/wiki/Document-oriented_database">object-document</a> mapping library for Java. In other words, it helps you save Java objects to a database and query them later. Weightless currently supports <a href="https://www.mongodb.com">MongoDB</a>.</p>
+    <p>Weightless is an <a href="https://en.wikipedia.org/wiki/Object%E2%80%93relational_mapping">object-relational</a> / <a href="https://en.wikipedia.org/wiki/Document-oriented_database">object-document</a> mapping library for Java. Weightless currently supports <a href="https://www.mongodb.com">MongoDB</a>.</p>
 
     <h2><a id="create-database-records" href="#create-database-records" aria-hidden="true"></a>Create Database Records</h2>
 
@@ -68,14 +76,25 @@
 
     <h2><a id="delete-database-records" href="#delete-database-records" aria-hidden="true"></a>Delete Database Records</h2>
 
-    <p>We might as well delete some database records, too.</p>
+    <p>Deleting database records is just as natual as finding them.</p>
 
     <iframe height="800px" width="100%" src="https://repl.it/@jackhallam/Weightless-Quickstart-Delete?lite=true" scrolling="no" frameborder="no" allowtransparency="true" allowfullscreen="true" sandbox="allow-forms allow-pointer-lock allow-popups allow-same-origin allow-scripts allow-modals"></iframe>
+
+    <h2><a id="weightless-with-a-webserver" href="#weightless-with-a-webserver" aria-hidden="true"></a>Weightless with a Webserver</h2>
+
+    <p>This example shows how weightless can be used to serve data behind a simple <a href="https://javalin.io/">Javalin</a> webserver.</p>
+
+    <iframe height="800px" width="100%" src="https://repl.it/@jackhallam/Weightless-Basic-WebServer?lite=true" scrolling="no" frameborder="no" allowtransparency="true" allowfullscreen="true" sandbox="allow-forms allow-pointer-lock allow-popups allow-same-origin allow-scripts allow-modals"></iframe>
+
+    <h2><a id="installation" href="#installation" aria-hidden="true"></a>Installation</h2>
+
+    <p>Install with maven:</p>
+
+    <code>&lt;dependency&gt;<br>&nbsp;&nbsp;&lt;groupId>com.jackhallam&lt;/groupId&gt;<br>&nbsp;&nbsp;&lt;artifactId>weightless-orm&lt;/artifactId&gt;<br>&nbsp;&nbsp;&lt;version>0.1.0-beta&lt;/version&gt;<br>&lt;/dependency&gt;</code>
 
   </main>
 
   <footer>
-
     <p><a href="https://github.com/jackhallam/weightless-orm">weightless-orm</a> by <a href="https://jackhallam.com">Jack Hallam</a></p>
     <p>Theme adapted from <a href="https://github.com/igoradamenko/awsm.css">awsm.css</a></p>
   </footer>
