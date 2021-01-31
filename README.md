@@ -2,9 +2,10 @@
 <img width="600" src="weightlesslogo.png">
 </p>
 
-Weightless is an [object-relational](https://en.wikipedia.org/wiki/Object%E2%80%93relational_mapping) / [object-document](https://en.wikipedia.org/wiki/Document-oriented_database) mapping library for Java. Weightless currently supports [MongoDB](https://www.mongodb.com).
+Weightless is the lowest barrier-to-entry database mapping library for the JVM. Weightless currently supports [MongoDB](https://www.mongodb.com). Learn more at [weightlessorm.com](https://weightlessorm.com).
 
 [![Github Code](https://img.shields.io/github/languages/top/jackhallam/weightless-orm?logo=github&logoColor=lightgrey)](https://github.com/jackhallam/weightless-orm)
+[![Maven Central](https://img.shields.io/maven-central/v/com.jackhallam/weightless-orm?label=maven&logo=apache&logoColor=lightgrey)](https://search.maven.org/artifact/com.jackhallam/weightless-orm/0.1.0-beta/jar)
 [![Travis CI Build Status](https://img.shields.io/travis/com/jackhallam/weightless-orm?logo=Travis-CI&logoColor=lightgrey)](https://travis-ci.com/jackhallam/weightless-orm)
 [![Codacy Badge](https://img.shields.io/codacy/grade/87dafa74154349a0af3878b3435b0f98?logo=codacy&logoColor=lightgrey)](https://app.codacy.com/gh/jackhallam/weightless-orm?utm_source=github.com&utm_medium=referral&utm_content=jackhallam/weightless-orm&utm_campaign=Badge_Grade)
 [![CodeFactor Code Quality](https://img.shields.io/codefactor/grade/github/jackhallam/weightless-orm?logo=codefactor&logoColor=lightgrey)](https://www.codefactor.io/repository/github/jackhallam/weightless-orm)
@@ -42,7 +43,7 @@ personAccess.findByName("James"); // { "name": "James", "age": 30 }
 ```
 
 ## Installation
-Install with maven:
+Install with [maven](https://search.maven.org/artifact/com.jackhallam/weightless-orm/0.1.0-beta/jar):
 ```xml
 <dependency>
   <groupId>com.jackhallam</groupId>
@@ -51,5 +52,10 @@ Install with maven:
 </dependency>
 ```
 
+## Is Weightless for Me?
+Is Weightless a good fit for your project? Weightless is designed to help projects get connected to a database as quickly as possible. Weightless is highly opinionated; it gives developers fewer customization options, and in return it is extremely easy to use.
+
+That being said, Weightless does not lock you in. Off-boarding when your project is mature enough to need a highly customized solution is very simple. You can still use the same database, and you can move one database table or collection away from Weightless' control at a time as needed.
+
 ## Going Further
-Visit [weightlessorm.com](https://weightlessorm.com) for a more expansive quickstart with live examples.
+Visit [weightlessorm.com](https://weightlessorm.com) for a more information with live examples.
