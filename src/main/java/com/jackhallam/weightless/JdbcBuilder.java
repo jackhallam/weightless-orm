@@ -8,8 +8,7 @@ import java.sql.SQLException;
 
 public class JdbcBuilder {
 
-  private Connection connection;
-//  private String databaseName;
+  private final Connection connection;
 
   public JdbcBuilder(String connectionString) {
     try {
@@ -19,21 +18,8 @@ public class JdbcBuilder {
     }
   }
 
-//  public JdbcBuilder database(String databaseName) {
-//    this.databaseName = databaseName;
-//    return this;
-//  }
-
   public Weightless build() {
-//    if (databaseName == null) {
-//      throw new WeightlessException("Include a database name when building Weightless instance");
-//    }
     JdbcPersistentStore jdbcPersistentStore = new JdbcPersistentStore(connection);
-//    try {
-//      jdbcPersistentStore.connectToDatabase(databaseName);
-//    } catch (SQLException e) {
-//      throw new WeightlessException(e);
-//    }
     return new Weightless(jdbcPersistentStore);
   }
 }

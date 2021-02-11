@@ -40,8 +40,8 @@ public class Weightless implements Closeable {
     return new InMemoryBuilder();
   }
 
-  public static JdbcBuilder jdbc(String connectionUrl) {
-    return new JdbcBuilder(connectionUrl);
+  public static H2MemoryBuilder h2Memory() {
+    return new H2MemoryBuilder();
   }
 
   private <T> T getNewInstanceOf(Class<T> clazz) {
