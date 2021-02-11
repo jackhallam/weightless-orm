@@ -49,6 +49,9 @@ public class TestBase {
   public static Collection<Supplier[]> data() {
     Supplier[][] data = {
       {
+        (Supplier<Weightless>) () -> Weightless.jdbc("jdbc:h2:mem:myDb").build()
+      },
+      {
         (Supplier<Weightless>) () -> Weightless.inMemory().build()
       },
       {

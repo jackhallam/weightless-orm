@@ -40,6 +40,10 @@ public class Weightless implements Closeable {
     return new InMemoryBuilder();
   }
 
+  public static JdbcBuilder jdbc(String connectionUrl) {
+    return new JdbcBuilder(connectionUrl);
+  }
+
   private <T> T getNewInstanceOf(Class<T> clazz) {
     try {
       Class<? extends T> dynamicType = new ByteBuddy()

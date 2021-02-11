@@ -1,6 +1,5 @@
 package com.jackhallam.weightless;
 
-
 import com.jackhallam.weightless.annotations.Create;
 import org.junit.Test;
 
