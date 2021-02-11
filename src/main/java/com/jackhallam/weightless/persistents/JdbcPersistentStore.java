@@ -1,6 +1,7 @@
 package com.jackhallam.weightless.persistents;
 
 import com.jackhallam.weightless.WeightlessException;
+import com.jackhallam.weightless.annotations.Sort;
 import com.jackhallam.weightless.annotations.field_filters.Contains;
 import com.jackhallam.weightless.annotations.field_filters.ContainsIgnoreCase;
 import com.jackhallam.weightless.annotations.field_filters.DoesNotExist;
@@ -20,7 +21,6 @@ import com.jackhallam.weightless.interceptors.handlers.ConditionHandler;
 import com.jackhallam.weightless.interceptors.handlers.SortHandler;
 
 import java.io.IOException;
-import java.lang.annotation.Annotation;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -28,6 +28,7 @@ import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -36,8 +37,8 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.function.BiFunction;
 import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 public class JdbcPersistentStore implements PersistentStore {
 
@@ -141,7 +142,28 @@ public class JdbcPersistentStore implements PersistentStore {
       List<String> questionMarks = new ArrayList<>();
       String whereClause = whereBuilder(conditionHandler.getSubFiltersIterator(), questionMarks);
       queryStringBuilder.append(whereClause);
-      
+
+      // ORDER BY column1 ASC|DESC, column2 ASC|DESC, ... ;
+      if (sortHandler.getSortsIterator().hasNext()) {
+
+        queryStringBuilder.append(" ORDER BY ");
+
+        List<String> sorts = new ArrayList<>();
+        sortHandler.getSortsIterator().forEachRemaining(sortContainer -> {
+          StringBuilder sortBuilder = new StringBuilder();
+          sortBuilder.append(sortContainer.fieldName.toUpperCase());
+
+          if (sortContainer.direction.equals(Sort.Direction.ASCENDING)) {
+            sortBuilder.append(" ASC ");
+          } else {
+            sortBuilder.append(" DESC ");
+          }
+          sorts.add(sortBuilder.toString());
+        });
+
+        queryStringBuilder.append(String.join(", ", sorts));
+      }
+
       try (PreparedStatement selectStatement = connection.prepareStatement(queryStringBuilder.toString())) {
 
         for (int i = 1; i <= questionMarks.size(); i++) {
@@ -170,12 +192,75 @@ public class JdbcPersistentStore implements PersistentStore {
 
   @Override
   public <T> Iterable<T> update(Iterable<T> tIterable, ConditionHandler conditionHandler) {
-    return null;
+
+    Iterator<T> tIterator = tIterable.iterator();
+    if (!tIterator.hasNext()) {
+      throw new WeightlessException("No object to use to update.");
+    }
+
+    T t = tIterator.next();
+
+    if (tIterator.hasNext()) {
+      throw new WeightlessException("Expected only one object to update but found more than one.");
+    }
+
+    Class<T> clazz = (Class<T>) t.getClass();
+
+    Iterable<T> deletedIterable = this.delete(clazz, conditionHandler);
+    Iterator<T> deletedIterator = deletedIterable.iterator();
+    if (!deletedIterator.hasNext()) {
+      return Collections.emptyList(); // We did not find an item to update
+    }
+
+    return create(Collections.singletonList(t)); // Convert that single object back to iterable and save it
   }
 
   @Override
   public <T> Iterable<T> delete(Class<T> clazz, ConditionHandler conditionHandler) {
-    return null;
+    try {
+      completeTable(clazz);
+
+      String classNameUpper = clazz.getSimpleName().toUpperCase();
+
+      Iterable<T> foundIterable = find(clazz, conditionHandler, new SortHandler<>());
+      List<T> found = StreamSupport.stream(foundIterable.spliterator(), false).collect(Collectors.toList());
+
+      List<String> columnsUpper = new ArrayList<>();
+      List<java.lang.reflect.Field> fieldsColumns = new ArrayList<>();
+      java.lang.reflect.Field[] fields = clazz.getDeclaredFields();
+      for (java.lang.reflect.Field field : fields) {
+        String fieldNameUpper = field.getName().toUpperCase();
+        boolean isAccessible = field.isAccessible();
+        field.setAccessible(true);
+        columnsUpper.add(fieldNameUpper);
+        fieldsColumns.add(field);
+        field.setAccessible(isAccessible);
+      }
+
+      // SELECT A, B, C FROM TABLENAME
+      StringBuilder queryStringBuilder = new StringBuilder("Delete FROM ");
+      queryStringBuilder.append(classNameUpper);
+
+      List<String> questionMarks = new ArrayList<>();
+      String whereClause = whereBuilder(conditionHandler.getSubFiltersIterator(), questionMarks);
+      queryStringBuilder.append(whereClause);
+
+      try (PreparedStatement deleteStatement = connection.prepareStatement(queryStringBuilder.toString())) {
+
+        for (int i = 1; i <= questionMarks.size(); i++) {
+          String questionMarkValue = questionMarks.get(i - 1);
+          deleteStatement.setString(i, questionMarkValue);
+        }
+
+        int out = deleteStatement.executeUpdate();
+        if (out != found.size()) {
+          return new ArrayList<>();
+        }
+      }
+      return found;
+    } catch (SQLException e) {
+      throw new WeightlessException(e);
+    }
   }
 
   public String whereBuilder(Iterator<ConditionHandler.SubFilter<?>> subFilterIterator, List<String> questionMarks) {
@@ -291,40 +376,6 @@ public class JdbcPersistentStore implements PersistentStore {
     });
 
     return queryStringBuilder.toString();
-  }
-
-  private Map<Class<? extends Annotation>, BiFunction<String, String, String>> getFiltersMap() {
-    Map<Class<? extends Annotation>, BiFunction<String, String, String>> filtersMap = new HashMap<>();
-//    filtersMap.put(Contains.class, (testerObject, dbObject) -> ((String)dbObject).contains((String)testerObject));
-//    filtersMap.put(ContainsIgnoreCase.class, (testerObject, dbObject) -> ((String)dbObject).toLowerCase().contains(((String)testerObject).toLowerCase()));
-//    filtersMap.put(DoesNotExist.class, (testerObject, dbObject) -> dbObject == null);
-//    filtersMap.put(EndsWith.class, (testerObject, dbObject) -> ((String)dbObject).endsWith((String)testerObject));
-//    filtersMap.put(EndsWithIgnoreCase.class, (testerObject, dbObject) -> ((String)dbObject).toLowerCase().endsWith(((String)testerObject).toLowerCase()));
-    ///filtersMap.put(Equals.class, (field, value) ->);
-//    filtersMap.put(Exists.class, (testerObject, dbObject) -> dbObject != null);
-    // filtersMap.put(GreaterThan.class, (field, value) -> field + " > " + value);
-//    filtersMap.put(GreaterThanOrEqualTo.class, (testerObject, dbObject) -> ((Comparable<Object>) dbObject).compareTo(testerObject) >= 0);
-//    filtersMap.put(HasAnyOf.class, (testerObject, dbObject) -> {
-//      for (Object o : ((Iterable<?>) testerObject)) {
-//        if (((Comparable<Object>) dbObject).compareTo(o) == 0) {
-//          return true;
-//        }
-//      }
-//      return false;
-//    });
-//    filtersMap.put(HasNoneOf.class, (testerObject, dbObject) -> {
-//      for (Object o : ((Iterable<?>) testerObject)) {
-//        if (((Comparable<Object>) dbObject).compareTo(o) == 0) {
-//          return false;
-//        }
-//      }
-//      return true;
-//    });
-//    filtersMap.put(LessThan.class, (testerObject, dbObject) -> ((Comparable<Object>) dbObject).compareTo(testerObject) < 0);
-//    filtersMap.put(LessThanOrEqualTo.class, (testerObject, dbObject) -> ((Comparable<Object>) dbObject).compareTo(testerObject) <= 0);
-//    filtersMap.put(StartsWith.class, (testerObject, dbObject) -> ((String)dbObject).startsWith((String)testerObject));
-//    filtersMap.put(StartsWithIgnoreCase.class, (testerObject, dbObject) -> ((String)dbObject).toLowerCase().startsWith(((String)testerObject).toLowerCase()));
-    return filtersMap;
   }
 
   private <T> void completeTable(Class<T> clazz) throws SQLException {
