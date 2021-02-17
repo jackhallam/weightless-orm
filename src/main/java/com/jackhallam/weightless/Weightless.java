@@ -40,8 +40,12 @@ public class Weightless implements Closeable {
     return new InMemoryBuilder();
   }
 
-  public static H2MemoryBuilder h2Memory() {
-    return new H2MemoryBuilder();
+  public static H2Builder h2() {
+    return new H2Builder();
+  }
+
+  public static MySqlBuilder mySql() {
+    return new MySqlBuilder();
   }
 
   private <T> T getNewInstanceOf(Class<T> clazz) {

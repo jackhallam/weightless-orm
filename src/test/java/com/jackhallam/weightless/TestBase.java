@@ -1,5 +1,8 @@
 package com.jackhallam.weightless;
 
+import ch.vorburger.exec.ManagedProcessException;
+import ch.vorburger.mariadb4j.DB;
+import ch.vorburger.mariadb4j.DBConfigurationBuilder;
 import com.mongodb.ServerAddress;
 import de.bwaldvogel.mongo.MongoServer;
 import de.bwaldvogel.mongo.backend.memory.MemoryBackend;
@@ -9,7 +12,11 @@ import org.junit.Ignore;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 
+import java.io.File;
+import java.io.IOException;
 import java.net.InetSocketAddress;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.function.Supplier;
@@ -21,6 +28,7 @@ public class TestBase {
   public Supplier<Weightless> weightlessSupplier;
   private Weightless weightless;
   private static MongoServer mongoServer;
+  private static DB mySqlDb;
 
   public TestBase(Supplier<Weightless> weightlessSupplier) {
     this.weightlessSupplier = weightlessSupplier;
@@ -39,6 +47,9 @@ public class TestBase {
     if (mongoServer != null) {
       mongoServer.shutdownNow();
     }
+    if (mySqlDb != null) {
+      mySqlDb.stop();
+    }
   }
 
   public <T> T getDal(Class<T> clazz) {
@@ -49,7 +60,36 @@ public class TestBase {
   public static Collection<Supplier[]> data() {
     Supplier[][] data = {
       {
-        (Supplier<Weightless>) () -> Weightless.h2Memory().build()
+        (Supplier<Weightless>) () -> Weightless.h2().memoryBacked().build()
+      },
+      {
+        (Supplier<Weightless>) () -> {
+          try {
+            File file = File.createTempFile("temp", null);
+            file.deleteOnExit();
+            Path path = file.toPath();
+            return Weightless.h2().fileBacked(path).build();
+          } catch (IOException ignored) {
+            return null;
+          }
+        }
+      },
+      {
+        (Supplier<Weightless>) () -> {
+          try {
+            File file = Files.createTempDirectory("temp").toFile();
+            file.deleteOnExit();
+            Path path = file.toPath();
+            DBConfigurationBuilder configBuilder = DBConfigurationBuilder.newBuilder();
+            configBuilder.setPort(0);
+            configBuilder.setDataDir(path.toString());
+            mySqlDb = DB.newEmbeddedDB(configBuilder.build());
+            mySqlDb.start();
+            return Weightless.mySql().host("localhost:" + mySqlDb.getConfiguration().getPort()).database("temp").build();
+          } catch (ManagedProcessException | IOException ignored) {
+            return null;
+          }
+        }
       },
       {
         (Supplier<Weightless>) () -> Weightless.inMemory().build()

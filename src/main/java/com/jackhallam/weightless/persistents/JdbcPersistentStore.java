@@ -33,7 +33,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -44,9 +43,11 @@ public class JdbcPersistentStore implements PersistentStore {
 
   private final Connection connection;
   private final Set<String> completedTablesClassNames = new HashSet<>();
+  private final SqlFlavor sqlFlavor;
 
-  public JdbcPersistentStore(Connection connection) {
+  public JdbcPersistentStore(Connection connection, SqlFlavor sqlFlavor) {
     this.connection = connection;
+    this.sqlFlavor = sqlFlavor;
   }
 
   @Override
@@ -282,96 +283,63 @@ public class JdbcPersistentStore implements PersistentStore {
       }
 
       if (subFilter.filterTypeAnnotation.annotationType().equals(Contains.class)) {
-        queryStringBuilder.append(fieldNameUpper).append(" LIKE (?) ");
-        questionMarks.add("%" + value + "%");
+        sqlFlavor.contains(fieldNameUpper, value, queryStringBuilder, questionMarks);
       }
 
       if (subFilter.filterTypeAnnotation.annotationType().equals(ContainsIgnoreCase.class)) {
-        queryStringBuilder.append("UPPER(").append(fieldNameUpper).append(") LIKE UPPER((?)) ");
-        questionMarks.add("%" + value + "%");
+        sqlFlavor.containsIgnoreCase(fieldNameUpper, value, queryStringBuilder, questionMarks);
       }
 
       if (subFilter.filterTypeAnnotation.annotationType().equals(DoesNotExist.class)) {
-        queryStringBuilder.append(fieldNameUpper).append(" IS NULL ");
+        sqlFlavor.doesNotExist(fieldNameUpper, value, queryStringBuilder, questionMarks);
       }
 
       if (subFilter.filterTypeAnnotation.annotationType().equals(EndsWith.class)) {
-        queryStringBuilder.append(fieldNameUpper).append(" LIKE (?) ");
-        questionMarks.add("%" + value);
+        sqlFlavor.endsWith(fieldNameUpper, value, queryStringBuilder, questionMarks);
       }
 
       if (subFilter.filterTypeAnnotation.annotationType().equals(EndsWithIgnoreCase.class)) {
-        queryStringBuilder.append("UPPER(").append(fieldNameUpper).append(") LIKE UPPER((?)) ");
-        questionMarks.add("%" + value);
+        sqlFlavor.endsWithIgnoreCase(fieldNameUpper, value, queryStringBuilder, questionMarks);
       }
 
       if (subFilter.filterTypeAnnotation.annotationType().equals(Equals.class)) {
-        queryStringBuilder.append(fieldNameUpper).append(" = (?) ");
-        questionMarks.add(value);
+        sqlFlavor.equals(fieldNameUpper, value, queryStringBuilder, questionMarks);
       }
 
       if (subFilter.filterTypeAnnotation.annotationType().equals(Exists.class)) {
-        queryStringBuilder.append(fieldNameUpper).append(" IS NOT NULL ");
+        sqlFlavor.exists(fieldNameUpper, value, queryStringBuilder, questionMarks);
       }
 
       if (subFilter.filterTypeAnnotation.annotationType().equals(GreaterThan.class)) {
-        queryStringBuilder.append(fieldNameUpper).append(" > (?) ");
-        questionMarks.add(value);
+        sqlFlavor.greaterThan(fieldNameUpper, value, queryStringBuilder, questionMarks);
       }
 
       if (subFilter.filterTypeAnnotation.annotationType().equals(GreaterThanOrEqualTo.class)) {
-        queryStringBuilder.append(fieldNameUpper).append(" >= (?) ");
-        questionMarks.add(value);
+        sqlFlavor.greaterThanOrEqualTo(fieldNameUpper, value, queryStringBuilder, questionMarks);
       }
 
       if (subFilter.filterTypeAnnotation.annotationType().equals(HasAnyOf.class)) {
-        queryStringBuilder.append("(");
-        AtomicBoolean isFirstSubfilter = new AtomicBoolean(true);
-        ((Iterable<?>) subFilter.value).forEach(item -> {
-          if (isFirstSubfilter.get()) {
-            isFirstSubfilter.set(false);
-          } else {
-            queryStringBuilder.append(" OR ");
-          }
-          queryStringBuilder.append(fieldNameUpper).append(" = (?)");
-          questionMarks.add(item.toString());
-        });
-        queryStringBuilder.append(")");
+        sqlFlavor.hasAnyOf(fieldNameUpper, StreamSupport.stream(((Iterable<?>) subFilter.value).spliterator(), false).map(Object::toString).collect(Collectors.toList()), queryStringBuilder, questionMarks);
       }
 
       if (subFilter.filterTypeAnnotation.annotationType().equals(HasNoneOf.class)) {
-        queryStringBuilder.append("(");
-        AtomicBoolean isFirstSubfilter = new AtomicBoolean(true);
-        ((Iterable<?>) subFilter.value).forEach(item -> {
-          if (isFirstSubfilter.get()) {
-            isFirstSubfilter.set(false);
-          } else {
-            queryStringBuilder.append(" AND ");
-          }
-          queryStringBuilder.append(fieldNameUpper).append(" != (?)");
-          questionMarks.add(item.toString());
-        });
-        queryStringBuilder.append(")");
+        sqlFlavor.hasNoneOf(fieldNameUpper, StreamSupport.stream(((Iterable<?>) subFilter.value).spliterator(), false).map(Object::toString).collect(Collectors.toList()), queryStringBuilder, questionMarks);
       }
 
       if (subFilter.filterTypeAnnotation.annotationType().equals(LessThan.class)) {
-        queryStringBuilder.append(fieldNameUpper).append(" < (?) ");
-        questionMarks.add(value);
+        sqlFlavor.lessThan(fieldNameUpper, value, queryStringBuilder, questionMarks);
       }
 
       if (subFilter.filterTypeAnnotation.annotationType().equals(LessThanOrEqualTo.class)) {
-        queryStringBuilder.append(fieldNameUpper).append(" <= (?) ");
-        questionMarks.add(value);
+        sqlFlavor.lessThanOrEqualTo(fieldNameUpper, value, queryStringBuilder, questionMarks);
       }
 
       if (subFilter.filterTypeAnnotation.annotationType().equals(StartsWith.class)) {
-        queryStringBuilder.append(fieldNameUpper).append(" LIKE (?) ");
-        questionMarks.add(value + "%");
+        sqlFlavor.startsWith(fieldNameUpper, value, queryStringBuilder, questionMarks);
       }
 
       if (subFilter.filterTypeAnnotation.annotationType().equals(StartsWithIgnoreCase.class)) {
-        queryStringBuilder.append("UPPER(").append(fieldNameUpper).append(") LIKE UPPER((?)) ");
-        questionMarks.add(value + "%");
+        sqlFlavor.startsWithIgnoreCase(fieldNameUpper, value, queryStringBuilder, questionMarks);
       }
     });
 
@@ -422,7 +390,7 @@ public class JdbcPersistentStore implements PersistentStore {
   private <T> void createTable(Class<T> clazz) throws SQLException {
     String classNameUpper = clazz.getSimpleName().toUpperCase();
     // In the form "create table TABLENAME (field1 INT, field2 VARCHAR)"
-    StringBuilder sqlBuilder = new StringBuilder("create table ");
+    StringBuilder sqlBuilder = new StringBuilder("CREATE TABLE ");
     sqlBuilder.append(classNameUpper);
     sqlBuilder.append(" (");
     List<String> fieldNamesUpperAndSQLType = new ArrayList<>();
@@ -444,14 +412,15 @@ public class JdbcPersistentStore implements PersistentStore {
   }
 
   private <S> Optional<String> javaTypeToSQLType(Class<S> clazz) {
-    Map<String, String> types = new HashMap<>();
-    types.put(boolean.class.getTypeName(), "BOOL");
-    types.put(int.class.getTypeName(), "INT");
-    types.put(long.class.getTypeName(), "BIGINT");
-    types.put(double.class.getTypeName(), "DOUBLE");
-    types.put(String.class.getTypeName(), "VARCHAR");
-    if (types.containsKey(clazz.getTypeName())) {
-      return Optional.ofNullable(types.get(clazz.getTypeName()));
+    HashMap<String, String> javaTypeToSQLType = new HashMap<>();
+    javaTypeToSQLType.put(boolean.class.getTypeName(), sqlFlavor.booleanAsSql());
+    javaTypeToSQLType.put(int.class.getTypeName(), sqlFlavor.intAsSql());
+    javaTypeToSQLType.put(long.class.getTypeName(), sqlFlavor.longAsSql());
+    javaTypeToSQLType.put(double.class.getTypeName(), sqlFlavor.doubleAsSql());
+    javaTypeToSQLType.put(String.class.getTypeName(), sqlFlavor.stringAsSql());
+
+    if (javaTypeToSQLType.containsKey(clazz.getTypeName())) {
+      return Optional.ofNullable(javaTypeToSQLType.get(clazz.getTypeName()));
     }
     return Optional.empty();
   }
