@@ -4,10 +4,16 @@ import com.jackhallam.weightless.persistents.MySqlFlavor;
 
 public class MySqlBuilder {
 
+  private String jdbcUrl;
   private String host = "localhost";
   private String databaseName = "temp";
   private String user;
   private String password;
+
+  public MySqlBuilder jdbcUrl(String jdbcUrl) {
+    this.jdbcUrl = jdbcUrl;
+    return this;
+  }
 
   public MySqlBuilder host(String host) {
     this.host = host;
@@ -30,7 +36,7 @@ public class MySqlBuilder {
   }
 
   public Weightless build() {
-    JdbcBuilder jdbcBuilder = new JdbcBuilder("jdbc:mysql://" + host + "/" + (user == null ? "" : "?user=" + user) + (password == null ? "" : "&password=" + password), new MySqlFlavor());
+    JdbcBuilder jdbcBuilder = new JdbcBuilder(jdbcUrl == null ? ("jdbc:mysql://" + host + "/" + (user == null ? "" : "?user=" + user) + (password == null ? "" : "&password=" + password)) : jdbcUrl, new MySqlFlavor());
     return jdbcBuilder.unloadedDatabase(databaseName).build();
   }
 }

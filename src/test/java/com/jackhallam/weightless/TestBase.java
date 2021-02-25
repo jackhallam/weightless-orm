@@ -11,6 +11,8 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
+import org.testcontainers.containers.MySQLContainer;
+import org.testcontainers.utility.DockerImageName;
 
 import java.io.File;
 import java.io.IOException;
@@ -29,6 +31,7 @@ public class TestBase {
   private Weightless weightless;
   private static MongoServer mongoServer;
   private static DB mySqlDb;
+  private static MySQLContainer<?> mySqlContainer;
 
   public TestBase(Supplier<Weightless> weightlessSupplier) {
     this.weightlessSupplier = weightlessSupplier;
@@ -49,6 +52,9 @@ public class TestBase {
     }
     if (mySqlDb != null) {
       mySqlDb.stop();
+    }
+    if (mySqlContainer != null) {
+      mySqlContainer.stop();
     }
   }
 
@@ -72,6 +78,13 @@ public class TestBase {
           } catch (IOException ignored) {
             return null;
           }
+        }
+      },
+      {
+        (Supplier<Weightless>) () -> {
+          mySqlContainer = new MySQLContainer<>(DockerImageName.parse("mysql"));
+          mySqlContainer.start();
+          return Weightless.mySql().jdbcUrl("jdbc:tc:mysql:///test?user=root&password=").database("temp").build();
         }
       },
       {

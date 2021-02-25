@@ -3,11 +3,14 @@ package com.jackhallam.weightless.persistents;
 import java.util.List;
 
 public interface SqlFlavor {
-
   String booleanAsSql();
+
   String intAsSql();
+
   String longAsSql();
+
   String doubleAsSql();
+
   String stringAsSql();
 
   void contains(String fieldName, String value, StringBuilder queryBuilder, List<String> questionMarks);
