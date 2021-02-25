@@ -155,11 +155,11 @@ public class InMemoryPersistentStore implements PersistentStore {
 
   private Map<Class<? extends Annotation>, BiFunction<Object, Object, Boolean>> getFiltersMap() {
     Map<Class<? extends Annotation>, BiFunction<Object, Object, Boolean>> filtersMap = new HashMap<>();
-    filtersMap.put(Contains.class, (testerObject, dbObject) -> ((String)dbObject).contains((String)testerObject));
-    filtersMap.put(ContainsIgnoreCase.class, (testerObject, dbObject) -> ((String)dbObject).toLowerCase().contains(((String)testerObject).toLowerCase()));
+    filtersMap.put(Contains.class, (testerObject, dbObject) -> ((String) dbObject).contains((String) testerObject));
+    filtersMap.put(ContainsIgnoreCase.class, (testerObject, dbObject) -> ((String) dbObject).toLowerCase().contains(((String) testerObject).toLowerCase()));
     filtersMap.put(DoesNotExist.class, (testerObject, dbObject) -> dbObject == null);
-    filtersMap.put(EndsWith.class, (testerObject, dbObject) -> ((String)dbObject).endsWith((String)testerObject));
-    filtersMap.put(EndsWithIgnoreCase.class, (testerObject, dbObject) -> ((String)dbObject).toLowerCase().endsWith(((String)testerObject).toLowerCase()));
+    filtersMap.put(EndsWith.class, (testerObject, dbObject) -> ((String) dbObject).endsWith((String) testerObject));
+    filtersMap.put(EndsWithIgnoreCase.class, (testerObject, dbObject) -> ((String) dbObject).toLowerCase().endsWith(((String) testerObject).toLowerCase()));
     filtersMap.put(Equals.class, (testerObject, dbObject) -> ((Comparable<Object>) testerObject).compareTo(dbObject) == 0);
     filtersMap.put(Exists.class, (testerObject, dbObject) -> dbObject != null);
     filtersMap.put(GreaterThan.class, (testerObject, dbObject) -> ((Comparable<Object>) dbObject).compareTo(testerObject) > 0);
@@ -182,8 +182,8 @@ public class InMemoryPersistentStore implements PersistentStore {
     });
     filtersMap.put(LessThan.class, (testerObject, dbObject) -> ((Comparable<Object>) dbObject).compareTo(testerObject) < 0);
     filtersMap.put(LessThanOrEqualTo.class, (testerObject, dbObject) -> ((Comparable<Object>) dbObject).compareTo(testerObject) <= 0);
-    filtersMap.put(StartsWith.class, (testerObject, dbObject) -> ((String)dbObject).startsWith((String)testerObject));
-    filtersMap.put(StartsWithIgnoreCase.class, (testerObject, dbObject) -> ((String)dbObject).toLowerCase().startsWith(((String)testerObject).toLowerCase()));
+    filtersMap.put(StartsWith.class, (testerObject, dbObject) -> ((String) dbObject).startsWith((String) testerObject));
+    filtersMap.put(StartsWithIgnoreCase.class, (testerObject, dbObject) -> ((String) dbObject).toLowerCase().startsWith(((String) testerObject).toLowerCase()));
     return filtersMap;
   }
 

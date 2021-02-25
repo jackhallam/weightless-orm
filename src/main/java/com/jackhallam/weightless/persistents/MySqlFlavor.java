@@ -5,7 +5,6 @@ import java.util.List;
 
 public class MySqlFlavor implements SqlFlavor {
 
-
   @Override
   public String booleanAsSql() {
     return "BOOL";

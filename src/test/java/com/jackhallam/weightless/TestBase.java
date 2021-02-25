@@ -1,12 +1,10 @@
 package com.jackhallam.weightless;
 
-import ch.vorburger.exec.ManagedProcessException;
-import ch.vorburger.mariadb4j.DB;
-import ch.vorburger.mariadb4j.DBConfigurationBuilder;
 import com.mongodb.ServerAddress;
 import de.bwaldvogel.mongo.MongoServer;
 import de.bwaldvogel.mongo.backend.memory.MemoryBackend;
 import org.junit.After;
+import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.runner.RunWith;
@@ -17,10 +15,10 @@ import org.testcontainers.utility.DockerImageName;
 import java.io.File;
 import java.io.IOException;
 import java.net.InetSocketAddress;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.UUID;
 import java.util.function.Supplier;
 
 @RunWith(Parameterized.class)
@@ -30,7 +28,6 @@ public class TestBase {
   public Supplier<Weightless> weightlessSupplier;
   private Weightless weightless;
   private static MongoServer mongoServer;
-  private static DB mySqlDb;
   private static MySQLContainer<?> mySqlContainer;
 
   public TestBase(Supplier<Weightless> weightlessSupplier) {
@@ -50,9 +47,10 @@ public class TestBase {
     if (mongoServer != null) {
       mongoServer.shutdownNow();
     }
-    if (mySqlDb != null) {
-      mySqlDb.stop();
-    }
+  }
+
+  @AfterClass
+  public static void afterClass() throws Exception {
     if (mySqlContainer != null) {
       mySqlContainer.stop();
     }
@@ -82,26 +80,11 @@ public class TestBase {
       },
       {
         (Supplier<Weightless>) () -> {
-          mySqlContainer = new MySQLContainer<>(DockerImageName.parse("mysql"));
-          mySqlContainer.start();
-          return Weightless.mySql().jdbcUrl("jdbc:tc:mysql:///test?user=root&password=").database("temp").build();
-        }
-      },
-      {
-        (Supplier<Weightless>) () -> {
-          try {
-            File file = Files.createTempDirectory("temp").toFile();
-            file.deleteOnExit();
-            Path path = file.toPath();
-            DBConfigurationBuilder configBuilder = DBConfigurationBuilder.newBuilder();
-            configBuilder.setPort(0);
-            configBuilder.setDataDir(path.toString());
-            mySqlDb = DB.newEmbeddedDB(configBuilder.build());
-            mySqlDb.start();
-            return Weightless.mySql().host("localhost:" + mySqlDb.getConfiguration().getPort()).database("temp").build();
-          } catch (ManagedProcessException | IOException ignored) {
-            return null;
+          if (mySqlContainer == null || !mySqlContainer.isRunning()) {
+            mySqlContainer = new MySQLContainer<>(DockerImageName.parse("mysql"));
+            mySqlContainer.start();
           }
+          return Weightless.mySql().jdbcUrl("jdbc:tc:mysql:///test?user=root&password=").database("temp" + UUID.randomUUID().toString().replaceAll("-", "")).build();
         }
       },
       {
