@@ -48,7 +48,7 @@ Install with [maven](https://search.maven.org/artifact/com.jackhallam/weightless
 <dependency>
   <groupId>com.jackhallam</groupId>
   <artifactId>weightless-orm</artifactId>
-  <version>0.1.0-beta</version>
+  <version>0.1.1-beta</version>
 </dependency>
 ```
 

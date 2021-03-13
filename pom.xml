@@ -6,7 +6,7 @@
 
     <groupId>com.jackhallam</groupId>
     <artifactId>weightless-orm</artifactId>
-    <version>0.1.0-SNAPSHOT</version>
+    <version>0.1.1-SNAPSHOT</version>
 
     <name>${project.groupId}:${project.artifactId}</name>
     <description>A lightweight database mapping library</description>
