@@ -139,10 +139,10 @@ public class MongoPersistentStore implements PersistentStore {
         } catch (IllegalAccessException ignored) {
         }
         field.setAccessible(isAccessible);
-        int n = datastore.delete(deleteQuery).getN();
-        if (n >= 1) {
-          deleted.add(item);
-        }
+      }
+      int n = datastore.delete(deleteQuery).getN();
+      if (n >= 1) {
+        deleted.add(item);
       }
     });
     return deleted;

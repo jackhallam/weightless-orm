@@ -39,6 +39,26 @@ public class TestDelete extends TestBase {
   }
 
   @Test
+  public void testDeleteMultipleFieldsSuccess() throws Exception {
+    TestObject testObjectOne = new TestObject();
+    testObjectOne.testField = "hello";
+    testObjectOne.otherTestField = 1;
+    testObjectOne = getDal(Dal.class).create(testObjectOne);
+
+    TestObject testObjectTwo = new TestObject();
+    testObjectTwo.testField = "hello";
+    testObjectTwo.otherTestField = 2;
+    testObjectTwo = getDal(Dal.class).create(testObjectTwo);
+
+    TestObject deleted = getDal(Dal.class).deleteTwoFields("hello", 1);
+    assertNotNull(deleted);
+
+    List<TestObject> found = getDal(Dal.class).findAll();
+    assertEquals(1, found.size());
+    assertEquals(2, found.get(0).otherTestField);
+  }
+
+  @Test
   public void testDeleteNotFoundSuccess() throws Exception {
     TestObject testObject = new TestObject();
     testObject.testField = "hello";
@@ -122,6 +142,9 @@ public class TestDelete extends TestBase {
 
     @Delete
     TestObject delete(@Field("testField") @Equals String testField);
+
+    @Delete
+    TestObject deleteTwoFields(@Field("testField") @Equals String testField, @Field("otherTestField") @Equals int otherTestField);
 
     @Delete
     Iterable<TestObject> deleteReturnIterable(@Field("testField") @Equals String testField);
